@@ -1,0 +1,44 @@
+plugins {
+    id 'java-library'
+    id 'idea'
+    id 'antlr'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+dependencies {
+
+    antlr "org.antlr:antlr4:4.7.1"
+    implementation "org.antlr:antlr4-runtime:4.7.1"
+
+}
+
+configurations {
+    compile {
+        extendsFrom = extendsFrom.findAll { it != configurations.antlr }
+    }
+}
+
+generateGrammarSource {
+    maxHeapSize = "64m"
+    arguments += [ "-visitor",
+                   "-long-messages",
+                   "-package", "de.raffaelhahn.coder" ]
+    outputDirectory = file("${projectDir}/src/generated/java")
+}
+
+clean {
+    delete file("${projectDir}/src/generated")
+}
+
+
+// Intellij
+idea {
+    module {
+        sourceDirs += file("${projectDir}/src/generated/java")
+        generatedSourceDirs += file("${projectDir}/src/generated/java")
+    }
+}

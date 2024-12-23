@@ -38,7 +38,7 @@ dependencies {
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core
 
-    implementation project(":lexer")
+    implementation project(path: ":lexer")
 
 
 }

@@ -26,12 +26,22 @@ generateGrammarSource {
     maxHeapSize = "64m"
     arguments += [ "-visitor",
                    "-long-messages",
-                   "-package", "de.raffaelhahn.coder" ]
+                   "-package", "de.raffaelhahn.coder.antlr" ]
     outputDirectory = file("${projectDir}/src/generated/java")
 }
 
 clean {
     delete file("${projectDir}/src/generated")
+}
+
+sourceSets {
+    generated{
+        java.srcDir "${projectDir}/src/generated/java/"
+    }
+
+    main {
+        java.srcDirs += "${projectDir}/src/generated/java/"
+    }
 }
 
 

@@ -1,5 +1,5 @@
-// Generated from de\raffaelhahn\coder\HTMLLexer.g4 by ANTLR 4.7.1
-package de.raffaelhahn.coder;
+// Generated from de\raffaelhahn\coder\antlr\HTMLLexer.g4 by ANTLR 4.7.1
+package de.raffaelhahn.coder.antlr;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.Token;

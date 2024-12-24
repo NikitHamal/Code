@@ -88,7 +88,7 @@ fragment TAG_NameChar:
 ;
 
 fragment TAG_NameStartChar:
-    [:a-zA-Z]
+    [:\p{L}]
     | '\u2070' ..'\u218F'
     | '\u2C00' ..'\u2FEF'
     | '\u3001' ..'\uD7FF'
@@ -123,7 +123,7 @@ ATTRIBUTE: DOUBLE_QUOTE_STRING | SINGLE_QUOTE_STRING | ATTCHARS | HEXCHARS | DEC
 
 fragment ATTCHARS: ATTCHAR+ ' '?;
 
-fragment ATTCHAR: '-' | '_' | '.' | '/' | '+' | ',' | '?' | '=' | ':' | ';' | '#' | [0-9a-zA-Z];
+fragment ATTCHAR: '-' | '_' | '.' | '/' | '+' | ',' | '?' | '=' | ':' | ';' | '#' | [\p{L}0-9];
 
 fragment HEXCHARS: '#' [0-9a-fA-F]+;
 

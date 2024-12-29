@@ -1,11 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:paddingVertical="16dp"
+    android:paddingHorizontal="8dp">
+
+    <ImageView
+        android:id="@+id/fileTreeItemChevron"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:src="@drawable/chevron_right"/>
+
+    <ImageView
+        android:id="@+id/fileTreeItemIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:src="@drawable/folder"/>
 
     <TextView
         android:id="@+id/fileTreeItemName"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:maxLines="1"/>
 
 </LinearLayout>

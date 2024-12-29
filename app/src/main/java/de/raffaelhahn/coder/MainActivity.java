@@ -7,10 +7,19 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.fragment.app.FragmentContainerView;
 
+import java.io.File;
+
+import de.raffaelhahn.coder.ui.CodeEditorFragment;
 import de.raffaelhahn.coder.ui.FileTreeFragment;
 
 public class MainActivity extends AppCompatActivity implements FileTreeFragment.FileTreeCallback {
+
+    private FragmentContainerView fileTreeContainer;
+    private FragmentContainerView codeEditorContainer;
+    private FileTreeFragment fileTreeFragment;
+
 
 
     @Override
@@ -23,6 +32,21 @@ public class MainActivity extends AppCompatActivity implements FileTreeFragment.
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        fileTreeContainer = findViewById(R.id.fileTreeContainer);
+        codeEditorContainer = findViewById(R.id.codeEditorContainer);
+
+        fileTreeFragment = new FileTreeFragment();
+
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fileTreeContainer, fileTreeFragment)
+                .commit();
+
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.codeEditorContainer, CodeEditorFragment.class, null)
+                .commit();
 
 
     }

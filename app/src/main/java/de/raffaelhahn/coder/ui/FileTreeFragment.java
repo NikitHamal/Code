@@ -12,6 +12,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import de.raffaelhahn.coder.R;
 import de.raffaelhahn.coder.ui.recyclerAdapters.FileTreeAdapter;
 
@@ -83,6 +92,35 @@ public class FileTreeFragment extends Fragment {
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
+
+        setRootFile(new File("/storage/emulated/0/Pictures")); //TODO DYNAMIC
+    }
+
+    public void setRootFile(File file) {
+        try {
+            List<Path> filePaths = Files
+                    .find(file.toPath(), Integer.MAX_VALUE, (filePath, fileAttr) -> fileAttr.isRegularFile() || fileAttr.isDirectory())
+                    .collect(Collectors.toList());
+
+            ArrayList<FileTreeAdapter.FileTreeItem> fileTreeItems = new ArrayList<>();
+            for(Path path : filePaths) {
+                FileTreeAdapter.FileTreeItem item = FileTreeAdapter.FileTreeItem.builder()
+                        .filePath(path.toString())
+                        .name(path.getFileName().toString())
+                        .directory(Files.isDirectory(path))
+                        .depth(path.getNameCount())
+                        .unfolded(true)
+                        .shown(true)
+                        .build();
+
+                fileTreeItems.add(item);
+            }
+
+            adapter.setFiles(fileTreeItems);
+            adapter.notifyDataSetChanged();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public interface FileTreeCallback {

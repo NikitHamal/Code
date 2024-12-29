@@ -1,10 +1,15 @@
 package de.raffaelhahn.coder;
 
+import static android.Manifest.permission.MANAGE_EXTERNAL_STORAGE;
+
 import android.app.Application;
+import android.content.pm.PackageManager;
+
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import org.eclipse.tm4e.core.registry.IThemeSource;
-
-import java.io.InputStream;
 
 import io.github.rosemoe.sora.langs.textmate.registry.FileProviderRegistry;
 import io.github.rosemoe.sora.langs.textmate.registry.GrammarRegistry;
@@ -16,6 +21,7 @@ public class CoderApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
 
         FileProviderRegistry.getInstance().addFileProvider(new AssetsFileResolver(getAssets()));
         ThemeRegistry themeRegistry = ThemeRegistry.getInstance();
@@ -31,5 +37,9 @@ public class CoderApp extends Application {
         themeRegistry.setTheme("Abyss");
 
         GrammarRegistry.getInstance().loadGrammars("textmate/languages.json");
+
+
     }
+
+
 }

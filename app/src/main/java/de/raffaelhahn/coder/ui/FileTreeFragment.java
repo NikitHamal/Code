@@ -16,7 +16,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,16 +28,11 @@ import de.raffaelhahn.coder.ui.recyclerAdapters.FileTreeAdapter;
  * Use the {@link FileTreeFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class FileTreeFragment extends Fragment {
+public class FileTreeFragment extends Fragment implements FileTreeCallback {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String ARG_PATH = "paramPath";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private String rootPath;
 
     private RecyclerView recyclerView;
     private FileTreeAdapter adapter;
@@ -47,20 +41,10 @@ public class FileTreeFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment FileTreeFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static FileTreeFragment newInstance(String param1, String param2) {
+    public static FileTreeFragment newInstance(String path) {
         FileTreeFragment fragment = new FileTreeFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putString(ARG_PATH, path);
         fragment.setArguments(args);
         return fragment;
     }
@@ -69,8 +53,7 @@ public class FileTreeFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            rootPath = getArguments().getString(ARG_PATH);
         }
     }
 
@@ -87,28 +70,29 @@ public class FileTreeFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         recyclerView = view.findViewById(R.id.fileTreeRecyclerView);
-        adapter = new FileTreeAdapter();
+        adapter = new FileTreeAdapter(this);
 
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
 
-        setRootFile(new File("/storage/emulated/0/Pictures")); //TODO DYNAMIC
+        setRootFile(new File(rootPath));
     }
 
-    public void setRootFile(File file) {
+    private void setRootFile(File file) {
         try {
             List<Path> filePaths = Files
                     .find(file.toPath(), Integer.MAX_VALUE, (filePath, fileAttr) -> fileAttr.isRegularFile() || fileAttr.isDirectory())
                     .collect(Collectors.toList());
 
             ArrayList<FileTreeAdapter.FileTreeItem> fileTreeItems = new ArrayList<>();
+            int rootNameCount = file.toPath().getNameCount();
             for(Path path : filePaths) {
                 FileTreeAdapter.FileTreeItem item = FileTreeAdapter.FileTreeItem.builder()
                         .filePath(path.toString())
                         .name(path.getFileName().toString())
                         .directory(Files.isDirectory(path))
-                        .depth(path.getNameCount())
+                        .depth(path.getNameCount() - rootNameCount)
                         .unfolded(true)
                         .shown(true)
                         .build();
@@ -123,12 +107,45 @@ public class FileTreeFragment extends Fragment {
         }
     }
 
-    public interface FileTreeCallback {
+    @Override
+    public void onFileSelected(String path) {
+        ((FileTreeCallback) getActivity()).onFileSelected(path);
+        File file = new File(path);
+        if(file.isDirectory()) {
+            List<FileTreeAdapter.FileTreeItem> files = adapter.getFiles();
+            FileTreeAdapter.FileTreeItem fileTreeItem = files.stream().filter(f -> f.getFilePath().equals(path)).findFirst().get();
+            files.stream()
+                    .filter(f -> f.getFilePath().startsWith(path) && !f.getFilePath().equals(path))
+                    .forEach(f -> {
+                        if(fileTreeItem.getDepth() + 1 == f.getDepth()) {
+                            f.setShown(!fileTreeItem.isUnfolded());
+                        } else if(fileTreeItem.getDepth() + 1 > f.getDepth()) {
+                            f.setShown(false);
+                        }
+                        if(fileTreeItem.isUnfolded()) {
+                            f.setShown(false);
+                        }
+                        f.setUnfolded(false);
+                    });
+            fileTreeItem.setUnfolded(!fileTreeItem.isUnfolded());
+            adapter.notifyDataSetChanged();
+        }
 
-        void onFileSelected(String path);
-        void onFileDeleted(String path);
-        void onFileRenamed(String path, String newName);
-        void onFileCreated(String path);
+    }
+
+    @Override
+    public void onFileDeleted(String path) {
+        ((FileTreeCallback) getActivity()).onFileDeleted(path);
+    }
+
+    @Override
+    public void onFileRenamed(String path, String newName) {
+        ((FileTreeCallback) getActivity()).onFileRenamed(path, newName);
+    }
+
+    @Override
+    public void onFileCreated(String path) {
+        ((FileTreeCallback) getActivity()).onFileCreated(path);
     }
 
 }

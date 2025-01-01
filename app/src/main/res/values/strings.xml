@@ -1,5 +1,5 @@
 <resources>
     <string name="app_name">Coder</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="open_project_directory">Choose other directory</string>
+    <string name="select_project">Please choose or add a project directory</string>
 </resources>

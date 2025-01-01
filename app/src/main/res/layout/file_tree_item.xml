@@ -3,7 +3,15 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingVertical="16dp"
-    android:paddingHorizontal="8dp">
+    android:paddingHorizontal="8dp"
+    android:background="?android:attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true">
+
+    <View
+        android:id="@+id/fileTreeItemSpacing"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"/>
 
     <ImageView
         android:id="@+id/fileTreeItemChevron"

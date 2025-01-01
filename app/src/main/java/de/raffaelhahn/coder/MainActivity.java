@@ -9,16 +9,23 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.FragmentContainerView;
 
+import com.google.android.material.tabs.TabLayout;
+
 import java.io.File;
 
 import de.raffaelhahn.coder.ui.CodeEditorFragment;
+import de.raffaelhahn.coder.ui.FileTreeCallback;
 import de.raffaelhahn.coder.ui.FileTreeFragment;
 
-public class MainActivity extends AppCompatActivity implements FileTreeFragment.FileTreeCallback {
+public class MainActivity extends AppCompatActivity implements FileTreeCallback {
 
     private FragmentContainerView fileTreeContainer;
     private FragmentContainerView codeEditorContainer;
     private FileTreeFragment fileTreeFragment;
+    private CodeEditorFragment codeEditorFragment;
+    private TabLayout editorTabs;
+
+    private String path;
 
 
 
@@ -33,10 +40,32 @@ public class MainActivity extends AppCompatActivity implements FileTreeFragment.
             return insets;
         });
 
+        Bundle b = getIntent().getExtras();
+        path = b.getString("path");
+
         fileTreeContainer = findViewById(R.id.fileTreeContainer);
         codeEditorContainer = findViewById(R.id.codeEditorContainer);
+        editorTabs = findViewById(R.id.codeEditorTabs);
 
-        fileTreeFragment = new FileTreeFragment();
+        editorTabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+
+        fileTreeFragment = FileTreeFragment.newInstance(path);
+        codeEditorFragment = new CodeEditorFragment();
 
         getSupportFragmentManager()
                 .beginTransaction()
@@ -45,15 +74,29 @@ public class MainActivity extends AppCompatActivity implements FileTreeFragment.
 
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.codeEditorContainer, CodeEditorFragment.class, null)
+                .replace(R.id.codeEditorContainer, codeEditorFragment)
                 .commit();
-
-
     }
 
     @Override
     public void onFileSelected(String path) {
-
+        File file = new File(path);
+        if(file.isFile()) {
+            TabLayout.Tab tab = null;
+            for (int i = 0; i < editorTabs.getTabCount(); i++) {
+                if (editorTabs.getTabAt(i).getTag().equals(path)) {
+                    tab = editorTabs.getTabAt(i);
+                    break;
+                }
+            }
+            if (tab == null) {
+                tab = editorTabs.newTab();
+                tab.setText(file.getName());
+                tab.setTag(path);
+                editorTabs.addTab(tab);
+            }
+            editorTabs.selectTab(tab);
+        }
     }
 
     @Override

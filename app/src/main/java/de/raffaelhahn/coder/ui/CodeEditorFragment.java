@@ -11,7 +11,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 import de.raffaelhahn.coder.R;
+import io.github.rosemoe.sora.event.ContentChangeEvent;
+import io.github.rosemoe.sora.event.EventReceiver;
+import io.github.rosemoe.sora.event.Unsubscribe;
 import io.github.rosemoe.sora.langs.textmate.TextMateColorScheme;
 import io.github.rosemoe.sora.langs.textmate.TextMateLanguage;
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry;
@@ -24,14 +32,9 @@ import io.github.rosemoe.sora.widget.CodeEditor;
  */
 public class CodeEditorFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String ARG_FILE_PATH = "paramFilePath";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private String path;
 
     private CodeEditor codeEditor;
 
@@ -39,20 +42,10 @@ public class CodeEditorFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment CodeEditorFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static CodeEditorFragment newInstance(String param1, String param2) {
+    public static CodeEditorFragment newInstance(String filePath) {
         CodeEditorFragment fragment = new CodeEditorFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putString(ARG_FILE_PATH, filePath);
         fragment.setArguments(args);
         return fragment;
     }
@@ -61,8 +54,7 @@ public class CodeEditorFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            path = getArguments().getString(ARG_FILE_PATH);
         }
     }
 
@@ -98,5 +90,27 @@ public class CodeEditorFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         codeEditor.release();
+    }
+
+    public void loadFile(String path) {
+        getArguments().putString(ARG_FILE_PATH, path);
+        try {
+            String content = new String(Files.readAllBytes(Paths.get(path)), StandardCharsets.UTF_8);
+
+            //TODO Problem when changing file -> content of old file is written into new file
+            codeEditor.setText(content);
+            codeEditor.subscribeEvent(ContentChangeEvent.class, (event, unsubscribe) -> {
+                if(path == null) {
+                    return;
+                }
+                try {
+                    Files.write(Paths.get(path), codeEditor.getText().toString().getBytes(StandardCharsets.UTF_8));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

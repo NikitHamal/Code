@@ -50,7 +50,9 @@ public class MainActivity extends AppCompatActivity implements FileTreeCallback 
         editorTabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
+                String path = (String) tab.getTag();
 
+                codeEditorFragment.loadFile(path);
             }
 
             @Override
@@ -65,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements FileTreeCallback 
         });
 
         fileTreeFragment = FileTreeFragment.newInstance(path);
-        codeEditorFragment = new CodeEditorFragment();
+        codeEditorFragment = CodeEditorFragment.newInstance(null);
 
         getSupportFragmentManager()
                 .beginTransaction()

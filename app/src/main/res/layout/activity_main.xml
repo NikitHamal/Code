@@ -25,16 +25,14 @@
 
     </com.google.android.material.tabs.TabLayout>
 
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/codeEditorContainer"
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/codeEditorViewPager"
+        xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/fileTreeContainer"
         app:layout_constraintTop_toBottomOf="@+id/codeEditorTabs" />
-
-
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

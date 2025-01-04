@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -84,6 +85,8 @@ public class CodeEditorFragment extends Fragment {
                 languageScopeName, true /* true for enabling auto-completion */
         );
         codeEditor.setEditorLanguage(language);
+
+        loadFile(path);
     }
 
     @Override
@@ -93,12 +96,17 @@ public class CodeEditorFragment extends Fragment {
     }
 
     public void loadFile(String path) {
+        long startA = System.currentTimeMillis();
+        this.path = path;
         getArguments().putString(ARG_FILE_PATH, path);
         try {
             String content = new String(Files.readAllBytes(Paths.get(path)), StandardCharsets.UTF_8);
 
+            long startB = System.currentTimeMillis();
             //TODO Problem when changing file -> content of old file is written into new file
             codeEditor.setText(content);
+            long endB = System.currentTimeMillis();
+            Log.d("CodeEditorFragment","Time to setText: " + (endB - startB) + "ms");
             codeEditor.subscribeEvent(ContentChangeEvent.class, (event, unsubscribe) -> {
                 if(path == null) {
                     return;
@@ -112,5 +120,7 @@ public class CodeEditorFragment extends Fragment {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        long endA = System.currentTimeMillis();
+        Log.d("CodeEditorFragment","Time method: " + (endA - startA) + "ms");
     }
 }

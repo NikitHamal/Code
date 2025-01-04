@@ -8,7 +8,9 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -21,7 +23,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import de.raffaelhahn.coder.R;
-import de.raffaelhahn.coder.ui.recyclerAdapters.FileTreeAdapter;
+import de.raffaelhahn.coder.ui.adapters.FileTreeAdapter;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -74,9 +76,17 @@ public class FileTreeFragment extends Fragment implements FileTreeCallback {
 
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-
+        registerForContextMenu(recyclerView);
 
         setRootFile(new File(rootPath));
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v,
+                                    ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        MenuInflater inflater = requireActivity().getMenuInflater();
+        inflater.inflate(R.menu.file_tree_context_menu, menu);
     }
 
     private void setRootFile(File file) {

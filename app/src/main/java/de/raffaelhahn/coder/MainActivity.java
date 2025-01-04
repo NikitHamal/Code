@@ -1,6 +1,11 @@
 package de.raffaelhahn.coder;
 
 import android.os.Bundle;
+import android.view.InputDevice;
+import android.view.KeyEvent;
+import android.view.MotionEvent;
+import android.view.View;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -8,21 +13,25 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.FragmentContainerView;
+import androidx.viewpager.widget.ViewPager;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
 
 import java.io.File;
 
 import de.raffaelhahn.coder.ui.CodeEditorFragment;
 import de.raffaelhahn.coder.ui.FileTreeCallback;
 import de.raffaelhahn.coder.ui.FileTreeFragment;
+import de.raffaelhahn.coder.ui.adapters.CodeEditorPagerAdapter;
 
 public class MainActivity extends AppCompatActivity implements FileTreeCallback {
 
     private FragmentContainerView fileTreeContainer;
-    private FragmentContainerView codeEditorContainer;
+    private ViewPager2 codeEditorViewPager;
+    private CodeEditorPagerAdapter codeEditorPagerAdapter;
     private FileTreeFragment fileTreeFragment;
-    private CodeEditorFragment codeEditorFragment;
     private TabLayout editorTabs;
 
     private String path;
@@ -43,61 +52,44 @@ public class MainActivity extends AppCompatActivity implements FileTreeCallback 
         Bundle b = getIntent().getExtras();
         path = b.getString("path");
 
+        codeEditorPagerAdapter = new CodeEditorPagerAdapter(this);
+
         fileTreeContainer = findViewById(R.id.fileTreeContainer);
-        codeEditorContainer = findViewById(R.id.codeEditorContainer);
+        codeEditorViewPager = findViewById(R.id.codeEditorViewPager);
         editorTabs = findViewById(R.id.codeEditorTabs);
-
-        editorTabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                String path = (String) tab.getTag();
-
-                codeEditorFragment.loadFile(path);
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-
-            }
-        });
+        codeEditorViewPager.setAdapter(codeEditorPagerAdapter);
 
         fileTreeFragment = FileTreeFragment.newInstance(path);
-        codeEditorFragment = CodeEditorFragment.newInstance(null);
 
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.fileTreeContainer, fileTreeFragment)
                 .commit();
 
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.codeEditorContainer, codeEditorFragment)
-                .commit();
+        new TabLayoutMediator(editorTabs, codeEditorViewPager, (tab, position) -> {
+            tab.setCustomView(R.layout.editor_tab_item);
+            TextView titleView = tab.getCustomView().findViewById(R.id.editorTabText);
+            titleView.setText(codeEditorPagerAdapter.getPaths().get(position));
+            tab.setText(codeEditorPagerAdapter.getPaths().get(position));
+            tab.getCustomView().findViewById(R.id.editorTabCloseButton).setOnClickListener(v -> {
+                codeEditorPagerAdapter.getPaths().remove(position);
+                codeEditorPagerAdapter.notifyDataSetChanged();
+            });
+        }).attach();
+        codeEditorViewPager.setUserInputEnabled(false);
     }
 
     @Override
     public void onFileSelected(String path) {
         File file = new File(path);
         if(file.isFile()) {
-            TabLayout.Tab tab = null;
-            for (int i = 0; i < editorTabs.getTabCount(); i++) {
-                if (editorTabs.getTabAt(i).getTag().equals(path)) {
-                    tab = editorTabs.getTabAt(i);
-                    break;
-                }
+            if(codeEditorPagerAdapter.getPaths().indexOf(path) == -1) {
+                codeEditorPagerAdapter.getPaths().add(path);
+                codeEditorPagerAdapter.notifyDataSetChanged();
+                codeEditorViewPager.setCurrentItem(codeEditorPagerAdapter.getPaths().size() - 1);
+            } else {
+                codeEditorViewPager.setCurrentItem(codeEditorPagerAdapter.getPaths().indexOf(path));
             }
-            if (tab == null) {
-                tab = editorTabs.newTab();
-                tab.setText(file.getName());
-                tab.setTag(path);
-                editorTabs.addTab(tab);
-            }
-            editorTabs.selectTab(tab);
         }
     }
 
@@ -115,4 +107,5 @@ public class MainActivity extends AppCompatActivity implements FileTreeCallback 
     public void onFileCreated(String path) {
 
     }
+
 }

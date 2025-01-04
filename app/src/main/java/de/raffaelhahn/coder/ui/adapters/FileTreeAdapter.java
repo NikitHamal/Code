@@ -1,4 +1,4 @@
-package de.raffaelhahn.coder.ui.recyclerAdapters;
+package de.raffaelhahn.coder.ui.adapters;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,13 +9,11 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import de.raffaelhahn.coder.R;
 import de.raffaelhahn.coder.ui.FileTreeCallback;
-import de.raffaelhahn.coder.ui.FileTreeFragment;
 import de.raffaelhahn.coder.utils.Utils;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

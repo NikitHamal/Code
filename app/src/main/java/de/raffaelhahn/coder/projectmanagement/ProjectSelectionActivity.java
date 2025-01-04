@@ -16,10 +16,15 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.documentfile.provider.DocumentFile;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.button.MaterialButton;
 
 import java.io.File;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Comparator;
 
 import de.raffaelhahn.coder.MainActivity;
 import de.raffaelhahn.coder.R;
@@ -27,7 +32,9 @@ import de.raffaelhahn.coder.R;
 public class ProjectSelectionActivity extends AppCompatActivity {
 
     private static final int REQUEST_CODE_DIRECTORY_PICKER = 10;
-    MaterialButton openButton;
+    private MaterialButton openButton;
+    private RecyclerView projectsRecyclerView;
+    private ProjectsAdapter projectsAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +55,21 @@ public class ProjectSelectionActivity extends AppCompatActivity {
             startActivityForResult(intent, REQUEST_CODE_DIRECTORY_PICKER);
         });
 
+        projectsRecyclerView = findViewById(R.id.projectSelectionRecyclerView);
+        projectsAdapter = new ProjectsAdapter(project -> openProject(project.getPath()));
+        ArrayList<Project> projects = new ArrayList<>(ProjectsStorage.getProjects(this));
+        projects.sort((o1, o2) -> {
+            if(o1.lastOpened == null) {
+                return 1;
+            }
+            if(o2.lastOpened == null) {
+                return -1;
+            }
+            return o1.lastOpened.compareTo(o2.lastOpened) * -1;
+        });
+        projectsAdapter.setProjects(projects);
+        projectsRecyclerView.setAdapter(projectsAdapter);
+        projectsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
 
     @Override
@@ -66,10 +88,16 @@ public class ProjectSelectionActivity extends AppCompatActivity {
             String fileSystemPath = getFileSystemPath(treeUri);
             Log.d("SelectedDirectory", "Path: " + fileSystemPath);
 
-            Intent i = new Intent(this, MainActivity.class);
-            i.putExtra("path", fileSystemPath);
-            startActivity(i);
+            ProjectsStorage.addProject(this, new Project(fileSystemPath, LocalDateTime.now()));
+
+            openProject(fileSystemPath);
         }
+    }
+
+    public void openProject(String path) {
+        Intent i = new Intent(this, MainActivity.class);
+        i.putExtra("path", path);
+        startActivity(i);
     }
 
     private String getFileSystemPath(Uri uri) {

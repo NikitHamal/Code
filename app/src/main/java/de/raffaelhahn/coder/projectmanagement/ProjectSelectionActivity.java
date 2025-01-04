@@ -1,4 +1,4 @@
-package de.raffaelhahn.coder.ui;
+package de.raffaelhahn.coder.projectmanagement;
 
 import android.content.Intent;
 import android.net.Uri;

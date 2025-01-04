@@ -1,4 +1,4 @@
-package de.raffaelhahn.coder.ui.adapters;
+package de.raffaelhahn.coder.editor;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -7,7 +7,6 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import java.util.ArrayList;
 
-import de.raffaelhahn.coder.ui.CodeEditorFragment;
 import lombok.Getter;
 import lombok.Setter;
 

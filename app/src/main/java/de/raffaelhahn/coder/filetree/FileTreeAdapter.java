@@ -1,4 +1,4 @@
-package de.raffaelhahn.coder.ui.adapters;
+package de.raffaelhahn.coder.filetree;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,21 +13,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.raffaelhahn.coder.R;
-import de.raffaelhahn.coder.ui.FileTreeCallback;
 import de.raffaelhahn.coder.utils.Utils;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 
 @RequiredArgsConstructor
 public class FileTreeAdapter extends RecyclerView.Adapter<FileTreeAdapter.ViewHolder> {
 
-    @Setter
-    @Getter
-    private List<FileTreeItem> files = new ArrayList<>();
+    private List<FileTreeNode> files = new ArrayList<>();
+    private int rootNameCount;
 
     private final FileTreeCallback callback;
 
@@ -40,11 +33,11 @@ public class FileTreeAdapter extends RecyclerView.Adapter<FileTreeAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(@NonNull FileTreeAdapter.ViewHolder holder, int position) {
-        FileTreeItem file = files.stream().filter(f -> f.isShown()).skip(position).findFirst().get();
-        if(file.isDirectory()) {
+        FileTreeNode fileNode = files.get(position);
+        if(fileNode.isDirectory()) {
             holder.fileIcon.setImageResource(R.drawable.folder);
             holder.fileChevron.setVisibility(View.VISIBLE);
-            if(file.isUnfolded()) {
+            if(fileNode.isShowChildren()) {
                 holder.fileChevron.setImageResource(R.drawable.chevron_down);
             } else {
                 holder.fileChevron.setImageResource(R.drawable.chevron_right);
@@ -53,15 +46,22 @@ public class FileTreeAdapter extends RecyclerView.Adapter<FileTreeAdapter.ViewHo
             holder.fileIcon.setImageResource(R.drawable.file);
             holder.fileChevron.setVisibility(View.INVISIBLE);
         }
-        holder.spacing.getLayoutParams().width = file.getDepth() * Utils.dpToPx(holder.itemView.getContext(), 16);
-        holder.fileName.setText(file.getName());
 
-        holder.itemView.setOnClickListener(v -> callback.onFileSelected(file.getFilePath()));
+        holder.spacing.getLayoutParams().width = (fileNode.getFile().toPath().getNameCount() - rootNameCount) * Utils.dpToPx(holder.itemView.getContext(), 16);
+        holder.fileName.setText(fileNode.getFile().getName());
+
+        holder.itemView.setOnClickListener(v -> callback.onFileTreeNodeSelected(fileNode));
+    }
+
+    public void setFiles(FileTreeNode rootNode) {
+        this.rootNameCount = rootNode.getFile().toPath().getNameCount();
+        this.files.clear();
+        this.files.addAll(rootNode.listFilesRecursively());
     }
 
     @Override
     public int getItemCount() {
-        return (int) files.stream().filter(f -> f.isShown()).count();
+        return files.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -78,17 +78,5 @@ public class FileTreeAdapter extends RecyclerView.Adapter<FileTreeAdapter.ViewHo
             fileChevron = itemView.findViewById(R.id.fileTreeItemChevron);
             fileIcon = itemView.findViewById(R.id.fileTreeItemIcon);
         }
-    }
-
-    @Data
-    @Builder
-    @AllArgsConstructor
-    public static class FileTreeItem {
-        private String filePath;
-        private String name;
-        private boolean directory;
-        private boolean unfolded;
-        private boolean shown;
-        private int depth;
     }
 }

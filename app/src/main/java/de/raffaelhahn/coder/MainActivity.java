@@ -1,10 +1,6 @@
 package de.raffaelhahn.coder;
 
 import android.os.Bundle;
-import android.view.InputDevice;
-import android.view.KeyEvent;
-import android.view.MotionEvent;
-import android.view.View;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -13,18 +9,15 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.FragmentContainerView;
-import androidx.viewpager.widget.ViewPager;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
-import java.io.File;
-
-import de.raffaelhahn.coder.ui.CodeEditorFragment;
-import de.raffaelhahn.coder.ui.FileTreeCallback;
-import de.raffaelhahn.coder.ui.FileTreeFragment;
-import de.raffaelhahn.coder.ui.adapters.CodeEditorPagerAdapter;
+import de.raffaelhahn.coder.filetree.FileTreeCallback;
+import de.raffaelhahn.coder.filetree.FileTreeFragment;
+import de.raffaelhahn.coder.filetree.FileTreeNode;
+import de.raffaelhahn.coder.editor.CodeEditorPagerAdapter;
 
 public class MainActivity extends AppCompatActivity implements FileTreeCallback {
 
@@ -80,9 +73,9 @@ public class MainActivity extends AppCompatActivity implements FileTreeCallback 
     }
 
     @Override
-    public void onFileSelected(String path) {
-        File file = new File(path);
-        if(file.isFile()) {
+    public void onFileTreeNodeSelected(FileTreeNode fileTreeNode) {
+        String path = fileTreeNode.getFile().getAbsolutePath();
+        if(fileTreeNode.getFile().isFile()) {
             if(codeEditorPagerAdapter.getPaths().indexOf(path) == -1) {
                 codeEditorPagerAdapter.getPaths().add(path);
                 codeEditorPagerAdapter.notifyDataSetChanged();
@@ -93,19 +86,19 @@ public class MainActivity extends AppCompatActivity implements FileTreeCallback 
         }
     }
 
+
     @Override
-    public void onFileDeleted(String path) {
+    public void onFileTreeNodeDeleteTriggered(FileTreeNode fileTreeNode) {
 
     }
 
     @Override
-    public void onFileRenamed(String path, String newName) {
+    public void onFileTreeNodeRenameTriggered(FileTreeNode fileTreeNode, String newName) {
 
     }
 
     @Override
-    public void onFileCreated(String path) {
+    public void onFileTreeNodeCreateTriggered(FileTreeNode parentFileTreeNode, String fileName) {
 
     }
-
 }

@@ -14,6 +14,7 @@ import org.eclipse.tm4e.core.registry.IThemeSource;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import de.raffaelhahn.coder.terminal.Terminal;
 import io.github.rosemoe.sora.langs.textmate.registry.FileProviderRegistry;
 import io.github.rosemoe.sora.langs.textmate.registry.GrammarRegistry;
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry;
@@ -24,11 +25,14 @@ import lombok.Getter;
 public class CoderApp extends Application {
     @Getter
     private ExecutorService executorService;
+    @Getter
+    private Terminal terminal;
     @Override
     public void onCreate() {
         super.onCreate();
 
         executorService = Executors.newFixedThreadPool(4);
+        terminal = new Terminal(getFilesDir(), this);
 
         FileProviderRegistry.getInstance().addFileProvider(new AssetsFileResolver(getAssets()));
         ThemeRegistry themeRegistry = ThemeRegistry.getInstance();

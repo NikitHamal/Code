@@ -28,6 +28,7 @@ import de.raffaelhahn.coder.filetree.FileTreeFragment;
 import de.raffaelhahn.coder.filetree.FileTreeNode;
 import de.raffaelhahn.coder.editor.CodeEditorPagerAdapter;
 import de.raffaelhahn.coder.terminal.Terminal;
+import de.raffaelhahn.coder.terminal.TerminalFragment;
 
 public class MainActivity extends AppCompatActivity implements FileTreeCallback {
 
@@ -36,6 +37,7 @@ public class MainActivity extends AppCompatActivity implements FileTreeCallback 
     private ViewPager2 codeEditorViewPager;
     private CodeEditorPagerAdapter codeEditorPagerAdapter;
     private FileTreeFragment fileTreeFragment;
+    private TerminalFragment terminalFragment;
     private TabLayout editorTabs;
 
     private String path;
@@ -53,7 +55,9 @@ public class MainActivity extends AppCompatActivity implements FileTreeCallback 
             return insets;
         });
 
-
+        getFilesDir().mkdirs();
+        Terminal terminal = new Terminal(getFilesDir(), (CoderApp) getApplication());
+        terminal.runCommand("ls", "-la");
 
         Bundle b = getIntent().getExtras();
         path = b.getString("path");
@@ -67,10 +71,16 @@ public class MainActivity extends AppCompatActivity implements FileTreeCallback 
         codeEditorViewPager.setAdapter(codeEditorPagerAdapter);
 
         fileTreeFragment = FileTreeFragment.newInstance(path);
+        terminalFragment = new TerminalFragment();
 
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.fileTreeContainer, fileTreeFragment)
+                .commit();
+
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.terminalContainer, terminalFragment)
                 .commit();
 
         new TabLayoutMediator(editorTabs, codeEditorViewPager, (tab, position) -> {

@@ -34,6 +34,7 @@ public class Terminal {
     public Terminal(File directory, CoderApp application) {
         this.application = application;
         processBuilder = new ProcessBuilder();
+        processBuilder.redirectErrorStream(true);
         processBuilder.directory(directory);
         processBuilder.environment().put("Path", "/bin");
     }

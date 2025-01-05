@@ -11,17 +11,24 @@ import androidx.core.content.ContextCompat;
 
 import org.eclipse.tm4e.core.registry.IThemeSource;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import io.github.rosemoe.sora.langs.textmate.registry.FileProviderRegistry;
 import io.github.rosemoe.sora.langs.textmate.registry.GrammarRegistry;
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry;
 import io.github.rosemoe.sora.langs.textmate.registry.model.ThemeModel;
 import io.github.rosemoe.sora.langs.textmate.registry.provider.AssetsFileResolver;
+import lombok.Getter;
 
 public class CoderApp extends Application {
+    @Getter
+    private ExecutorService executorService;
     @Override
     public void onCreate() {
         super.onCreate();
 
+        executorService = Executors.newFixedThreadPool(4);
 
         FileProviderRegistry.getInstance().addFileProvider(new AssetsFileResolver(getAssets()));
         ThemeRegistry themeRegistry = ThemeRegistry.getInstance();
@@ -41,5 +48,9 @@ public class CoderApp extends Application {
 
     }
 
-
+    @Override
+    public void onTerminate() {
+        super.onTerminate();
+        executorService.shutdown();
+    }
 }

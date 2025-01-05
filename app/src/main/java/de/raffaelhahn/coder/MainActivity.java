@@ -1,10 +1,15 @@
 package de.raffaelhahn.coder;
 
 import android.os.Bundle;
+import android.view.MotionEvent;
+import android.view.PointerIcon;
+import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.Guideline;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -18,6 +23,7 @@ import de.raffaelhahn.coder.filetree.FileTreeCallback;
 import de.raffaelhahn.coder.filetree.FileTreeFragment;
 import de.raffaelhahn.coder.filetree.FileTreeNode;
 import de.raffaelhahn.coder.editor.CodeEditorPagerAdapter;
+import de.raffaelhahn.coder.terminal.Terminal;
 
 public class MainActivity extends AppCompatActivity implements FileTreeCallback {
 
@@ -41,6 +47,7 @@ public class MainActivity extends AppCompatActivity implements FileTreeCallback 
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
 
         Bundle b = getIntent().getExtras();
         path = b.getString("path");
@@ -70,6 +77,61 @@ public class MainActivity extends AppCompatActivity implements FileTreeCallback 
             });
         }).attach();
         codeEditorViewPager.setUserInputEnabled(false);
+        makeDraggable(findViewById(R.id.divider), fileTreeContainer, (View)codeEditorViewPager.getParent());
+    }
+
+    public void makeDraggable(View divider, View viewA, View viewB){
+        divider.setOnTouchListener(new View.OnTouchListener() {
+            float initialX = 0;
+            boolean isDragging = false;
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        initialX = event.getRawX();
+                        isDragging = true;
+
+                        v.getParent().requestDisallowInterceptTouchEvent(true);
+                        return true;
+
+                    case MotionEvent.ACTION_MOVE:
+                        if (isDragging) {
+                            LinearLayout.LayoutParams paramsLeft = (LinearLayout.LayoutParams) viewA.getLayoutParams();
+                            LinearLayout.LayoutParams paramsRight = (LinearLayout.LayoutParams) viewB.getLayoutParams();
+
+                            int totalWidth = ((View) viewA.getParent()).getWidth();
+                            float newLeftWeight = event.getRawX() / totalWidth;
+                            float newRightWeight = 1 - newLeftWeight;
+
+                            paramsLeft.weight = newLeftWeight;
+                            paramsRight.weight = newRightWeight;
+
+                            viewA.setLayoutParams(paramsLeft);
+                            viewB.setLayoutParams(paramsRight);
+                        }
+                        return true;
+
+                    case MotionEvent.ACTION_UP:
+                    case MotionEvent.ACTION_CANCEL:
+                        isDragging = false;
+                        return true;
+
+                    default:
+                        return false;
+                }
+            }
+        });
+
+
+        divider.setOnHoverListener((v, event) -> {
+            if (event.getAction() == MotionEvent.ACTION_HOVER_ENTER) {
+                v.setPointerIcon(PointerIcon.getSystemIcon(MainActivity.this, PointerIcon.TYPE_HORIZONTAL_DOUBLE_ARROW));
+            } else if (event.getAction() == MotionEvent.ACTION_HOVER_EXIT) {
+                v.setPointerIcon(PointerIcon.getSystemIcon(MainActivity.this, PointerIcon.TYPE_DEFAULT));
+            }
+            return false; // Ereignis weiterleiten
+        });
     }
 
     @Override

@@ -24,6 +24,7 @@ public class Terminal {
     /**
      * Konstruktor
      * @param directory e.g. context.getFilesDir()
+     * @param application CoderApp
      */
     public Terminal(File directory, CoderApp application) {
         this.application = application;

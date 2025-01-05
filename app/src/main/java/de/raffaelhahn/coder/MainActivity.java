@@ -1,5 +1,8 @@
 package de.raffaelhahn.coder;
 
+import static androidx.core.view.ViewCompat.setSystemGestureExclusionRects;
+
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.PointerIcon;
@@ -9,7 +12,6 @@ import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.Guideline;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -18,6 +20,8 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
+
+import java.util.List;
 
 import de.raffaelhahn.coder.filetree.FileTreeCallback;
 import de.raffaelhahn.coder.filetree.FileTreeFragment;
@@ -28,6 +32,7 @@ import de.raffaelhahn.coder.terminal.Terminal;
 public class MainActivity extends AppCompatActivity implements FileTreeCallback {
 
     private FragmentContainerView fileTreeContainer;
+    private FragmentContainerView terminalContainer;
     private ViewPager2 codeEditorViewPager;
     private CodeEditorPagerAdapter codeEditorPagerAdapter;
     private FileTreeFragment fileTreeFragment;
@@ -49,12 +54,14 @@ public class MainActivity extends AppCompatActivity implements FileTreeCallback 
         });
 
 
+
         Bundle b = getIntent().getExtras();
         path = b.getString("path");
 
         codeEditorPagerAdapter = new CodeEditorPagerAdapter(this);
 
         fileTreeContainer = findViewById(R.id.fileTreeContainer);
+        terminalContainer = findViewById(R.id.terminalContainer);
         codeEditorViewPager = findViewById(R.id.codeEditorViewPager);
         editorTabs = findViewById(R.id.codeEditorTabs);
         codeEditorViewPager.setAdapter(codeEditorPagerAdapter);
@@ -77,19 +84,20 @@ public class MainActivity extends AppCompatActivity implements FileTreeCallback 
             });
         }).attach();
         codeEditorViewPager.setUserInputEnabled(false);
-        makeDraggable(findViewById(R.id.divider), fileTreeContainer, (View)codeEditorViewPager.getParent());
+        makeDraggable(findViewById(R.id.divider1), fileTreeContainer, findViewById(R.id.rightPane), true);
+        makeDraggable(findViewById(R.id.divider2), (View) codeEditorViewPager.getParent(), terminalContainer, false);
     }
 
-    public void makeDraggable(View divider, View viewA, View viewB){
+    public void makeDraggable(View divider, View viewA, View viewB, boolean horizontal){
         divider.setOnTouchListener(new View.OnTouchListener() {
-            float initialX = 0;
+            float initialPos = 0;
             boolean isDragging = false;
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
-                        initialX = event.getRawX();
+                        initialPos = horizontal ? event.getRawX() : event.getRawY();
                         isDragging = true;
 
                         v.getParent().requestDisallowInterceptTouchEvent(true);
@@ -97,18 +105,18 @@ public class MainActivity extends AppCompatActivity implements FileTreeCallback 
 
                     case MotionEvent.ACTION_MOVE:
                         if (isDragging) {
-                            LinearLayout.LayoutParams paramsLeft = (LinearLayout.LayoutParams) viewA.getLayoutParams();
-                            LinearLayout.LayoutParams paramsRight = (LinearLayout.LayoutParams) viewB.getLayoutParams();
+                            LinearLayout.LayoutParams paramsA = (LinearLayout.LayoutParams) viewA.getLayoutParams();
+                            LinearLayout.LayoutParams paramsB = (LinearLayout.LayoutParams) viewB.getLayoutParams();
 
-                            int totalWidth = ((View) viewA.getParent()).getWidth();
-                            float newLeftWeight = event.getRawX() / totalWidth;
-                            float newRightWeight = 1 - newLeftWeight;
+                            int total = horizontal ? ((View) viewA.getParent()).getWidth() : ((View) viewA.getParent()).getHeight();
+                            float newAWeight = (horizontal ? event.getRawX() : event.getRawY()) / total;
+                            float newBWeight = 1 - newAWeight;
 
-                            paramsLeft.weight = newLeftWeight;
-                            paramsRight.weight = newRightWeight;
+                            paramsA.weight = newAWeight;
+                            paramsB.weight = newBWeight;
 
-                            viewA.setLayoutParams(paramsLeft);
-                            viewB.setLayoutParams(paramsRight);
+                            viewA.setLayoutParams(paramsA);
+                            viewB.setLayoutParams(paramsB);
                         }
                         return true;
 
@@ -126,7 +134,7 @@ public class MainActivity extends AppCompatActivity implements FileTreeCallback 
 
         divider.setOnHoverListener((v, event) -> {
             if (event.getAction() == MotionEvent.ACTION_HOVER_ENTER) {
-                v.setPointerIcon(PointerIcon.getSystemIcon(MainActivity.this, PointerIcon.TYPE_HORIZONTAL_DOUBLE_ARROW));
+                v.setPointerIcon(PointerIcon.getSystemIcon(MainActivity.this, horizontal ? PointerIcon.TYPE_HORIZONTAL_DOUBLE_ARROW : PointerIcon.TYPE_VERTICAL_DOUBLE_ARROW));
             } else if (event.getAction() == MotionEvent.ACTION_HOVER_EXIT) {
                 v.setPointerIcon(PointerIcon.getSystemIcon(MainActivity.this, PointerIcon.TYPE_DEFAULT));
             }

@@ -10,6 +10,8 @@ import java.util.concurrent.Executor;
 import java.util.stream.Stream;
 
 import de.raffaelhahn.coder.CoderApp;
+import de.raffaelhahn.coder.terminal.termux.FileUtils;
+import de.raffaelhahn.coder.terminal.termux.TermuxConstants;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
@@ -28,15 +30,24 @@ public class Terminal {
     /**
      * Konstruktor
      *
-     * @param directory   e.g. context.getFilesDir()
      * @param application CoderApp
      */
-    public Terminal(File directory, CoderApp application) {
+    public Terminal(CoderApp application) {
+        File homeDir = new File(TermuxConstants.TERMUX_HOME_DIR_PATH);
+        if(!homeDir.exists()) {
+            FileUtils.createDirectoryFile("shell home", TermuxConstants.TERMUX_HOME_DIR_PATH);
+        }
         this.application = application;
         processBuilder = new ProcessBuilder();
         processBuilder.redirectErrorStream(true);
-        processBuilder.directory(directory);
-        processBuilder.environment().put("Path", "/bin");
+        processBuilder.directory(new File(TermuxConstants.TERMUX_HOME_DIR_PATH)); //new File(directory, "usr")
+        //processBuilder.environment().put("Path", "/data/data/de.raffaelhahn.coder/files/usr/bin");
+        processBuilder.environment().put("HOME", TermuxConstants.TERMUX_HOME_DIR_PATH);
+        processBuilder.environment().put("PREFIX",  TermuxConstants.TERMUX_PREFIX_DIR_PATH);
+
+        processBuilder.environment().put("TMPDIR", TermuxConstants.TERMUX_TMP_PREFIX_DIR_PATH);
+        processBuilder.environment().put("PATH", TermuxConstants.TERMUX_BIN_PREFIX_DIR_PATH);
+        processBuilder.environment().remove("LD_LIBRARY_PATH");
     }
 
     public void runCommand(String...commandAndArgs) {
@@ -47,8 +58,14 @@ public class Terminal {
         executor.execute(() -> {
             String errorMessage;
             try {
-                String[] bashCommand = Stream.concat(Stream.of("/bin/sh", "-c"), Stream.of(commandAndArgs)).toArray(String[]::new);
-                processBuilder.command(bashCommand);
+                String[] bashCommand = new String[]{
+                        //"/bin/bash",
+                        //"-c",
+                        //"'"+String.join(" ", commandAndArgs)+"'"
+                        String.join(" ", commandAndArgs)
+                };
+                //String[] bashCommand = Stream.concat(Stream.of("/bin/sh", "-c"), Stream.of(commandAndArgs)).toArray(String[]::new);
+                processBuilder.command(commandAndArgs);
                 process = processBuilder.start();
                 BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
                 String line;
@@ -80,4 +97,6 @@ public class Terminal {
             process = null;
         }
     }
+
+
 }

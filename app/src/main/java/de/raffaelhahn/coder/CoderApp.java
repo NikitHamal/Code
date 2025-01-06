@@ -32,7 +32,7 @@ public class CoderApp extends Application {
         super.onCreate();
 
         executorService = Executors.newFixedThreadPool(4);
-        terminal = new Terminal(getFilesDir(), this);
+        terminal = new Terminal(this);
 
         FileProviderRegistry.getInstance().addFileProvider(new AssetsFileResolver(getAssets()));
         ThemeRegistry themeRegistry = ThemeRegistry.getInstance();

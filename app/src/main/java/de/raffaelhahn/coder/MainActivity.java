@@ -29,6 +29,7 @@ import de.raffaelhahn.coder.filetree.FileTreeNode;
 import de.raffaelhahn.coder.editor.CodeEditorPagerAdapter;
 import de.raffaelhahn.coder.terminal.Terminal;
 import de.raffaelhahn.coder.terminal.TerminalFragment;
+import de.raffaelhahn.coder.terminal.TerminalInstaller;
 
 public class MainActivity extends AppCompatActivity implements FileTreeCallback {
 
@@ -55,9 +56,7 @@ public class MainActivity extends AppCompatActivity implements FileTreeCallback 
             return insets;
         });
 
-        getFilesDir().mkdirs();
-        Terminal terminal = new Terminal(getFilesDir(), (CoderApp) getApplication());
-        terminal.runCommand("ls", "-la");
+        new TerminalInstaller().install();
 
         Bundle b = getIntent().getExtras();
         path = b.getString("path");

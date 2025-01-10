@@ -56,4 +56,14 @@ public class TermuxConstants {
      */
     public static final String TERMUX_BIN_PREFIX_DIR_PATH = TERMUX_PREFIX_DIR_PATH + "/bin"; // Default: "/data/data/com.termux/files/usr/bin"
 
+
+    ///// NEEEEEEEEEEEEEEEWWWWWWWWWW
+
+    @SuppressLint("SdCardPath")
+    public static final String FILES_PATH = "/data/data/de.raffaelhahn.coder/files";
+    public static final String PREFIX_PATH = FILES_PATH + "/usr";
+    public static final String BIN_PATH = PREFIX_PATH + "/bin";
+    public static final String HOME_PATH = FILES_PATH + "/home";
+    public static final String APP_LIB_PATH = FILES_PATH + "/applib";
+
 }

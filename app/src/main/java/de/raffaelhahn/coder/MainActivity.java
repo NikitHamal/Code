@@ -56,7 +56,9 @@ public class MainActivity extends AppCompatActivity implements FileTreeCallback 
             return insets;
         });
 
-        new TerminalInstaller().install();
+        TerminalInstaller terminalInstaller = new TerminalInstaller();
+        terminalInstaller.setupAppLibSymlink(this);
+        terminalInstaller.install();
 
         Bundle b = getIntent().getExtras();
         path = b.getString("path");

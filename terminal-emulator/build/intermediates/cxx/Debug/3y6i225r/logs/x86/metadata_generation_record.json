@@ -1,0 +1,145 @@
+[
+  {
+    "level_": 0,
+    "message_": "Start JSON generation. Platform version: 30 min SDK version: x86",
+    "file_": "D:\\AndroidStudioProjects\\Coder\\terminal-emulator\\src\\main\\jni\\Android.mk",
+    "tag_": "debug|x86",
+    "diagnosticCode_": 0,
+    "memoizedIsInitialized": 1,
+    "unknownFields": {
+      "fields": {}
+    },
+    "memoizedSize": -1,
+    "memoizedHashCode": 0
+  },
+  {
+    "level_": 0,
+    "message_": "rebuilding JSON D:\\AndroidStudioProjects\\Coder\\terminal-emulator\\build\\.cxx\\Debug\\3y6i225r\\x86\\android_gradle_build.json due to:",
+    "file_": "D:\\AndroidStudioProjects\\Coder\\terminal-emulator\\src\\main\\jni\\Android.mk",
+    "tag_": "debug|x86",
+    "diagnosticCode_": 0,
+    "memoizedIsInitialized": 1,
+    "unknownFields": {
+      "fields": {}
+    },
+    "memoizedSize": -1,
+    "memoizedHashCode": 0
+  },
+  {
+    "level_": 0,
+    "message_": "- no fingerprint file, will remove stale configuration folder",
+    "file_": "D:\\AndroidStudioProjects\\Coder\\terminal-emulator\\src\\main\\jni\\Android.mk",
+    "tag_": "debug|x86",
+    "diagnosticCode_": 0,
+    "memoizedIsInitialized": 1,
+    "unknownFields": {
+      "fields": {}
+    },
+    "memoizedSize": -1,
+    "memoizedHashCode": 0
+  },
+  {
+    "level_": 0,
+    "message_": "removing stale contents from \u0027D:\\AndroidStudioProjects\\Coder\\terminal-emulator\\build\\.cxx\\Debug\\3y6i225r\\x86\u0027",
+    "file_": "D:\\AndroidStudioProjects\\Coder\\terminal-emulator\\src\\main\\jni\\Android.mk",
+    "tag_": "debug|x86",
+    "diagnosticCode_": 0,
+    "memoizedIsInitialized": 1,
+    "unknownFields": {
+      "fields": {}
+    },
+    "memoizedSize": -1,
+    "memoizedHashCode": 0
+  },
+  {
+    "level_": 0,
+    "message_": "created folder \u0027D:\\AndroidStudioProjects\\Coder\\terminal-emulator\\build\\.cxx\\Debug\\3y6i225r\\x86\u0027",
+    "file_": "D:\\AndroidStudioProjects\\Coder\\terminal-emulator\\src\\main\\jni\\Android.mk",
+    "tag_": "debug|x86",
+    "diagnosticCode_": 0,
+    "memoizedIsInitialized": 1,
+    "unknownFields": {
+      "fields": {}
+    },
+    "memoizedSize": -1,
+    "memoizedHashCode": 0
+  },
+  {
+    "level_": 0,
+    "message_": "executing ndkBuild @echo off\n\"D:\\\\ProgramData\\\\AndroidSDK\\\\ndk\\\\27.2.12479018\\\\ndk-build.cmd\" ^\n  \"NDK_PROJECT_PATH\u003dnull\" ^\n  \"APP_BUILD_SCRIPT\u003dD:\\\\AndroidStudioProjects\\\\Coder\\\\terminal-emulator\\\\src\\\\main\\\\jni\\\\Android.mk\" ^\n  \"APP_ABI\u003dx86\" ^\n  \"NDK_ALL_ABIS\u003dx86\" ^\n  \"NDK_DEBUG\u003d1\" ^\n  \"APP_PLATFORM\u003dandroid-30\" ^\n  \"NDK_OUT\u003dD:\\\\AndroidStudioProjects\\\\Coder\\\\terminal-emulator\\\\build\\\\intermediates\\\\cxx\\\\Debug\\\\3y6i225r/obj\" ^\n  \"NDK_LIBS_OUT\u003dD:\\\\AndroidStudioProjects\\\\Coder\\\\terminal-emulator\\\\build\\\\intermediates\\\\cxx\\\\Debug\\\\3y6i225r/lib\" ^\n  \"APP_CFLAGS+\u003d-std\u003dc11\" ^\n  \"APP_CFLAGS+\u003d-Wall\" ^\n  \"APP_CFLAGS+\u003d-Wextra\" ^\n  \"APP_CFLAGS+\u003d-Werror\" ^\n  \"APP_CFLAGS+\u003d-Os\" ^\n  \"APP_CFLAGS+\u003d-fno-stack-protector\" ^\n  \"APP_CFLAGS+\u003d-Wl,--gc-sections\" ^\n  \"APP_SHORT_COMMANDS\u003dfalse\" ^\n  \"LOCAL_SHORT_COMMANDS\u003dfalse\" ^\n  -B ^\n  -n\n",
+    "file_": "D:\\AndroidStudioProjects\\Coder\\terminal-emulator\\src\\main\\jni\\Android.mk",
+    "tag_": "debug|x86",
+    "diagnosticCode_": 0,
+    "memoizedIsInitialized": 1,
+    "unknownFields": {
+      "fields": {}
+    },
+    "memoizedSize": -1,
+    "memoizedHashCode": 0
+  },
+  {
+    "level_": 0,
+    "message_": "@echo off\n\"D:\\\\ProgramData\\\\AndroidSDK\\\\ndk\\\\27.2.12479018\\\\ndk-build.cmd\" ^\n  \"NDK_PROJECT_PATH\u003dnull\" ^\n  \"APP_BUILD_SCRIPT\u003dD:\\\\AndroidStudioProjects\\\\Coder\\\\terminal-emulator\\\\src\\\\main\\\\jni\\\\Android.mk\" ^\n  \"APP_ABI\u003dx86\" ^\n  \"NDK_ALL_ABIS\u003dx86\" ^\n  \"NDK_DEBUG\u003d1\" ^\n  \"APP_PLATFORM\u003dandroid-30\" ^\n  \"NDK_OUT\u003dD:\\\\AndroidStudioProjects\\\\Coder\\\\terminal-emulator\\\\build\\\\intermediates\\\\cxx\\\\Debug\\\\3y6i225r/obj\" ^\n  \"NDK_LIBS_OUT\u003dD:\\\\AndroidStudioProjects\\\\Coder\\\\terminal-emulator\\\\build\\\\intermediates\\\\cxx\\\\Debug\\\\3y6i225r/lib\" ^\n  \"APP_CFLAGS+\u003d-std\u003dc11\" ^\n  \"APP_CFLAGS+\u003d-Wall\" ^\n  \"APP_CFLAGS+\u003d-Wextra\" ^\n  \"APP_CFLAGS+\u003d-Werror\" ^\n  \"APP_CFLAGS+\u003d-Os\" ^\n  \"APP_CFLAGS+\u003d-fno-stack-protector\" ^\n  \"APP_CFLAGS+\u003d-Wl,--gc-sections\" ^\n  \"APP_SHORT_COMMANDS\u003dfalse\" ^\n  \"LOCAL_SHORT_COMMANDS\u003dfalse\" ^\n  -B ^\n  -n\n",
+    "file_": "D:\\AndroidStudioProjects\\Coder\\terminal-emulator\\src\\main\\jni\\Android.mk",
+    "tag_": "debug|x86",
+    "diagnosticCode_": 0,
+    "memoizedIsInitialized": 1,
+    "unknownFields": {
+      "fields": {}
+    },
+    "memoizedSize": -1,
+    "memoizedHashCode": 0
+  },
+  {
+    "level_": 0,
+    "message_": "Received process result: 0",
+    "file_": "D:\\AndroidStudioProjects\\Coder\\terminal-emulator\\src\\main\\jni\\Android.mk",
+    "tag_": "debug|x86",
+    "diagnosticCode_": 0,
+    "memoizedIsInitialized": 1,
+    "unknownFields": {
+      "fields": {}
+    },
+    "memoizedSize": -1,
+    "memoizedHashCode": 0
+  },
+  {
+    "level_": 0,
+    "message_": "parse and convert ndk-build output to build configuration JSON",
+    "file_": "D:\\AndroidStudioProjects\\Coder\\terminal-emulator\\src\\main\\jni\\Android.mk",
+    "tag_": "debug|x86",
+    "diagnosticCode_": 0,
+    "memoizedIsInitialized": 1,
+    "unknownFields": {
+      "fields": {}
+    },
+    "memoizedSize": -1,
+    "memoizedHashCode": 0
+  },
+  {
+    "level_": 0,
+    "message_": "done executing ndkBuild",
+    "file_": "D:\\AndroidStudioProjects\\Coder\\terminal-emulator\\src\\main\\jni\\Android.mk",
+    "tag_": "debug|x86",
+    "diagnosticCode_": 0,
+    "memoizedIsInitialized": 1,
+    "unknownFields": {
+      "fields": {}
+    },
+    "memoizedSize": -1,
+    "memoizedHashCode": 0
+  },
+  {
+    "level_": 0,
+    "message_": "JSON generation completed without problems",
+    "file_": "D:\\AndroidStudioProjects\\Coder\\terminal-emulator\\src\\main\\jni\\Android.mk",
+    "tag_": "debug|x86",
+    "diagnosticCode_": 0,
+    "memoizedIsInitialized": 1,
+    "unknownFields": {
+      "fields": {}
+    },
+    "memoizedSize": -1,
+    "memoizedHashCode": 0
+  }
+]

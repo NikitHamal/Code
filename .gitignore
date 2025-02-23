@@ -13,3 +13,5 @@
 .externalNativeBuild
 .cxx
 local.properties
+/terminal-emulator/build/
+/terminal-view/build/

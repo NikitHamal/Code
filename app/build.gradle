@@ -139,15 +139,15 @@ def downloadFile(String localUrl, String remoteUrl, String expectedChecksum) {
 
 task downloadPrebuilt() {
     doLast {
-        def bootstrapVersion = "2025.01.09-r1"
+        def bootstrapVersion = "2025.02.21-r1"
         def arches = [
-                "aarch64": "9a9cdb4ed1c29dcf3e8f2f354291f7520309229c96bc70790a39c9a11929a1c2",
-                "x86_64": "f8e0b1d869c6c8e9e5d2c02c1f76092712873de40519d3630d44944784a43e5d",
-                "arm": "ebad4e013e1f36a2e5228064f7494acf08fec01a3f668f4d207ba251cb38edbe"
+                "aarch64": "41b0ef53ab3d368fed7b030489ef14fec7ae527a2e47749da31c2a402c9eef2a",
+                "x86_64": "d92a879a4f1f2f79f8c4df900861174908892be804bbf826468dd67af487442e",
+                "arm": "eff03e5dde8f29fd403efb148a0b1c170f9bd78175d08c7372e717ed6a9fc87d"
         ]
         arches.each { arch, checksum ->
             def downloadTo = "src/main/cpp/bootstrap-${arch}.zip"
-            def url = "https://github.com/termux-play-store/termux-packages/releases/download/bootstrap-${bootstrapVersion}/bootstrap-${arch}.zip"
+            def url = "https://github.com/Philipp0002/termux-packages/releases/download/bootstrap-${bootstrapVersion}/bootstrap-archives-${arch}.zip"
             downloadFile(downloadTo, url, checksum)
         }
 

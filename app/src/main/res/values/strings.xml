@@ -2,6 +2,13 @@
     <string name="app_name">Coder</string>
     <string name="open_project_directory">Choose other directory</string>
     <string name="select_project">Please choose or add a project directory</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="intro_welcome_header">Welcome to Coder!</string>
+    <string name="intro_welcome_text">This wizard will help you set up your development environment.</string>
+    <string name="intro_permission_header">Permissions</string>
+    <string name="intro_permission_text">The app needs your permission to access the devices storage.\nIt is needed for running the local terminal and access to your projects files.</string>
+    <string name="intro_permission_give">Give permission</string>
+    <string name="intro_terminal_install_header">Terminal</string>
+    <string name="intro_terminal_install_text">The terminal will now be installed. Don\'t close the app until this process has finished.</string>
+    <string name="intro_terminal_install_text_done">The terminal installation has finished. Please continue!</string>
+    <string name="intro_continue">Continue</string>
 </resources>

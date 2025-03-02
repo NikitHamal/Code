@@ -28,6 +28,8 @@ import java.util.Comparator;
 
 import de.raffaelhahn.coder.MainActivity;
 import de.raffaelhahn.coder.R;
+import de.raffaelhahn.coder.intro.IntroActivity;
+import de.raffaelhahn.coder.utils.Utils;
 
 public class ProjectSelectionActivity extends AppCompatActivity {
 
@@ -46,6 +48,12 @@ public class ProjectSelectionActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        if(!Utils.checkStoragePermissions(this)) {
+            startActivity(new Intent(this, IntroActivity.class));
+            finish();
+            return;
+        }
 
         openButton = findViewById(R.id.projectSelectionOpenButton);
         openButton.setOnClickListener(v -> {

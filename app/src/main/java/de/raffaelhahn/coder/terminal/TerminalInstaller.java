@@ -1,8 +1,5 @@
 package de.raffaelhahn.coder.terminal;
 
-import static de.raffaelhahn.coder.terminal.termux.TermuxConstants.TERMUX_PREFIX_DIR;
-import static de.raffaelhahn.coder.terminal.termux.TermuxConstants.TERMUX_PREFIX_DIR_PATH;
-import static de.raffaelhahn.coder.terminal.termux.TermuxConstants.TERMUX_STAGING_PREFIX_DIR;
 import static de.raffaelhahn.coder.terminal.termux.TermuxConstants.TERMUX_STAGING_PREFIX_DIR_PATH;
 import static de.raffaelhahn.coder.terminal.TermuxInstaller.loadZipBytes;
 
@@ -26,30 +23,28 @@ import java.util.zip.ZipInputStream;
 
 import de.raffaelhahn.coder.terminal.termux.FileUtils;
 import de.raffaelhahn.coder.terminal.termux.TermuxConstants;
-import de.raffaelhahn.coder.terminal.termux.TermuxFileUtils;
 
 import de.raffaelhahn.coder.terminal.termux.Error;
 
 public class TerminalInstaller {
 
-    public TerminalInstaller() {
-
-    }
-
-    public void install() {
-
+    public void install(TerminalInstallerListener listener) {
+        if (new File(TermuxConstants.PREFIX_PATH).exists()) {
+            listener.onTerminalInstallerDone();
+            return;
+        }
         new Thread(() -> {
             try {
                 // Delete prefix staging directory or any file at its destination
                 File stagingPrefixFile = new File(TERMUX_STAGING_PREFIX_DIR_PATH);
                 if (stagingPrefixFile.exists() && !deleteDir(stagingPrefixFile)) {
-                    //showBootstrapErrorDialog(activity, whenDone, "Unable to delete old staging area.");
+                    listener.onTerminalInstallerFailed("Unable to delete old staging area.");
                     return;
                 }
 
                 File prefixFile = new File(TERMUX_STAGING_PREFIX_DIR_PATH);
                 if (prefixFile.exists() && !deleteDir(prefixFile)) {
-                    //showBootstrapErrorDialog(activity, whenDone, "Unable to delete old PREFIX.");
+                    listener.onTerminalInstallerFailed("Unable to delete old PREFIX.");
                     return;
                 }
 
@@ -116,22 +111,14 @@ public class TerminalInstaller {
 
                 Os.rename(TERMUX_STAGING_PREFIX_DIR_PATH, TermuxConstants.PREFIX_PATH);
                 Log.i("TerminalInstaller", "Installation done");
+                listener.onTerminalInstallerDone();
 
                 //activity.runOnUiThread(whenDone);
             } catch (final Exception e) {
                 Log.e("TerminalInstaller", "Error in installation", e);
-                //showBootstrapErrorDialog(activity, whenDone, "Error in installation: " + e.getMessage());
-            } finally {
-                /*activity.runOnUiThread(() -> {
-                    try {
-                        progress.dismiss();
-                    } catch (RuntimeException e) {
-                        // Activity already dismissed - ignore.
-                    }
-                });*/
+                listener.onTerminalInstallerFailed("Error in installation: " + e.getMessage());
             }
         }).start();
-
     }
 
     public static boolean deleteDir(File dir) {
@@ -150,7 +137,7 @@ public class TerminalInstaller {
     }
 
 
-    public static void setupAppLibSymlink(Context context) {
+    public void setupAppLibSymlink(Context context) {
         var nativeLibraryDir = context.getApplicationInfo().nativeLibraryDir;
         var targetFile = new File(TermuxConstants.APP_LIB_PATH);
         new Thread(() -> {
@@ -185,5 +172,10 @@ public class TerminalInstaller {
 
     private static Error ensureDirectoryExists(File directory) {
         return FileUtils.createDirectoryFile(directory.getAbsolutePath());
+    }
+
+    public static interface TerminalInstallerListener {
+        void onTerminalInstallerDone();
+        void onTerminalInstallerFailed(String error);
     }
 }

@@ -1,64 +1,75 @@
-package de.raffaelhahn.coder;
+package de.raffaelhahn.coder.intro;
 
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.Settings;
-import android.util.Log;
-import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+import androidx.fragment.app.Fragment;
 
-public class SetupActivity extends AppCompatActivity {
+import android.os.Environment;
+import android.provider.Settings;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.Toast;
 
+import de.raffaelhahn.coder.R;
+import de.raffaelhahn.coder.utils.Utils;
+
+public class IntroPermissionFragment extends Fragment {
+
+    private IntroActivity activity;
     private static final int STORAGE_PERMISSION_CODE = 23;
+    private Button button;
+
+    public IntroPermissionFragment() {
+        // Required empty public constructor
+    }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_setup);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_intro_permission, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        button = view.findViewById(R.id.button);
+
+        button.setOnClickListener(v -> {
+            if (Utils.checkStoragePermissions(requireContext())) {
+                activity.nextFragment();
+            } else {
+                requestForStoragePermissions();
+            }
         });
-
-        if (checkStoragePermissions()) {
-            //todo when permission is granted
-        } else {
-            requestForStoragePermissions();
-        }
     }
 
-    public boolean checkStoragePermissions() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            //Android is 11 (R) or above
-            return Environment.isExternalStorageManager();
-        } else {
-            //Below android 11
-            int write = ContextCompat.checkSelfPermission(this, WRITE_EXTERNAL_STORAGE);
-            int read = ContextCompat.checkSelfPermission(this, READ_EXTERNAL_STORAGE);
 
-            return read == PackageManager.PERMISSION_GRANTED && write == PackageManager.PERMISSION_GRANTED;
-        }
-    }
 
     private void requestForStoragePermissions() {
         //Android is 11 (R) or above
@@ -66,7 +77,7 @@ public class SetupActivity extends AppCompatActivity {
             try {
                 Intent intent = new Intent();
                 intent.setAction(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
-                Uri uri = Uri.fromParts("package", this.getPackageName(), null);
+                Uri uri = Uri.fromParts("package", requireContext().getPackageName(), null);
                 intent.setData(uri);
                 storageActivityResultLauncher.launch(intent);
             } catch (Exception e) {
@@ -77,7 +88,7 @@ public class SetupActivity extends AppCompatActivity {
         } else {
             //Below android 11
             ActivityCompat.requestPermissions(
-                    this,
+                    requireActivity(),
                     new String[]{WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE},
                     STORAGE_PERMISSION_CODE
             );
@@ -96,10 +107,12 @@ public class SetupActivity extends AppCompatActivity {
                                 if(Environment.isExternalStorageManager()){
                                     //Manage External Storage Permissions Granted
                                     Log.d(this.getClass().getName(), "onActivityResult: Manage External Storage Permissions Granted");
+
+                                    activity.nextFragment();
                                 }else{
-                                    Toast.makeText(SetupActivity.this, "Storage Permissions Denied", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(requireContext(), "Storage Permissions Denied", Toast.LENGTH_SHORT).show();
                                 }
-                            }else{
+                            } else {
                                 //Below android 11
 
                             }
@@ -115,11 +128,20 @@ public class SetupActivity extends AppCompatActivity {
                 boolean read = grantResults[1] == PackageManager.PERMISSION_GRANTED;
 
                 if(read && write){
-                    Toast.makeText(SetupActivity.this, "Storage Permissions Granted", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(requireContext(), "Storage Permissions Granted", Toast.LENGTH_SHORT).show();
+                    activity.nextFragment();
                 }else{
-                    Toast.makeText(SetupActivity.this, "Storage Permissions Denied", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(requireContext(), "Storage Permissions Denied", Toast.LENGTH_SHORT).show();
                 }
             }
+        }
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        if(context instanceof IntroActivity io) {
+            activity = io;
         }
     }
 }

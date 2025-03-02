@@ -3,6 +3,7 @@ package de.raffaelhahn.coder;
 import static android.Manifest.permission.MANAGE_EXTERNAL_STORAGE;
 
 import android.app.Application;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 
 import androidx.annotation.NonNull;
@@ -14,7 +15,10 @@ import org.eclipse.tm4e.core.registry.IThemeSource;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import de.raffaelhahn.coder.intro.IntroActivity;
 import de.raffaelhahn.coder.terminal.Terminal;
+import de.raffaelhahn.coder.terminal.TerminalInstaller;
+import de.raffaelhahn.coder.utils.Utils;
 import io.github.rosemoe.sora.langs.textmate.registry.FileProviderRegistry;
 import io.github.rosemoe.sora.langs.textmate.registry.GrammarRegistry;
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry;
@@ -32,6 +36,7 @@ public class CoderApp extends Application {
         super.onCreate();
 
         executorService = Executors.newFixedThreadPool(4);
+
         terminal = new Terminal(this);
 
         FileProviderRegistry.getInstance().addFileProvider(new AssetsFileResolver(getAssets()));
@@ -48,8 +53,6 @@ public class CoderApp extends Application {
         themeRegistry.setTheme("Abyss");
 
         GrammarRegistry.getInstance().loadGrammars("textmate/languages.json");
-
-
     }
 
     @Override

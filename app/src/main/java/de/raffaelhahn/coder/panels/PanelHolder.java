@@ -1,5 +1,6 @@
 package de.raffaelhahn.coder.panels;
 
+import android.content.ClipData;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -10,6 +11,8 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Pair;
+import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +25,7 @@ public class PanelHolder extends Fragment implements PanelIconsAdapter.PanelSele
     private PanelIconsAdapter panelIconsAdapter;
     private Panel postponedShowPanel;
     private int placeholderId;
+    private Panel currentlyShownPanel;
 
 
     public PanelHolder() {
@@ -31,7 +35,7 @@ public class PanelHolder extends Fragment implements PanelIconsAdapter.PanelSele
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        panelIconsAdapter = new PanelIconsAdapter(this);
+        panelIconsAdapter = new PanelIconsAdapter(this, this);
     }
 
     @Override
@@ -56,6 +60,40 @@ public class PanelHolder extends Fragment implements PanelIconsAdapter.PanelSele
             showPanelInternal(postponedShowPanel);
             postponedShowPanel = null;
         }
+
+        requireView().setOnDragListener((v, event) -> {
+            switch (event.getAction()) {
+                case DragEvent.ACTION_DRAG_ENDED:
+                    if(event.getResult() &&
+                            event.getLocalState() instanceof Pair<?, ?> pair &&
+                            pair.first instanceof PanelHolder originView &&
+                            pair.second instanceof Panel panel) {
+                        if(originView == PanelHolder.this) {
+                            removePanel(panel);
+                        }
+                        return true;
+                    }
+                    break;
+                case DragEvent.ACTION_DRAG_STARTED:
+                    if (event.getLocalState() instanceof Pair<?, ?> pair &&
+                            pair.first instanceof PanelHolder &&
+                            pair.second instanceof Panel) {
+                        return true;
+                    }
+                    break;
+                case DragEvent.ACTION_DROP:
+                    if (event.getLocalState() instanceof Pair<?, ?> pair &&
+                            pair.first instanceof PanelHolder originView &&
+                            pair.second instanceof Panel panel) {
+                        if(originView != PanelHolder.this) {
+                            addPanel(panel);
+                            return true;
+                        }
+                    }
+                    break;
+            }
+            return false;
+        });
     }
 
     @Override
@@ -84,6 +122,7 @@ public class PanelHolder extends Fragment implements PanelIconsAdapter.PanelSele
         FragmentTransaction ft = getParentFragmentManager().beginTransaction();
         ft.replace(placeholderId, panel.getFragment());
         ft.commit();
+        currentlyShownPanel = panel;
     }
 
     /**
@@ -104,5 +143,11 @@ public class PanelHolder extends Fragment implements PanelIconsAdapter.PanelSele
         int index = panelIconsAdapter.getPanels().indexOf(panel);
         panelIconsAdapter.getPanels().remove(panel);
         panelIconsAdapter.notifyItemRemoved(index);
+        if(currentlyShownPanel == panel) {
+            currentlyShownPanel = null;
+            FragmentTransaction ft = getParentFragmentManager().beginTransaction();
+            ft.remove(panel.getFragment());
+            ft.commit();
+        }
     }
 }

@@ -63,17 +63,6 @@ public class PanelHolder extends Fragment implements PanelIconsAdapter.PanelSele
 
         requireView().setOnDragListener((v, event) -> {
             switch (event.getAction()) {
-                case DragEvent.ACTION_DRAG_ENDED:
-                    if(event.getResult() &&
-                            event.getLocalState() instanceof Pair<?, ?> pair &&
-                            pair.first instanceof PanelHolder originView &&
-                            pair.second instanceof Panel panel) {
-                        if(originView == PanelHolder.this) {
-                            removePanel(panel);
-                        }
-                        return true;
-                    }
-                    break;
                 case DragEvent.ACTION_DRAG_STARTED:
                     if (event.getLocalState() instanceof Pair<?, ?> pair &&
                             pair.first instanceof PanelHolder &&
@@ -86,7 +75,8 @@ public class PanelHolder extends Fragment implements PanelIconsAdapter.PanelSele
                             pair.first instanceof PanelHolder originView &&
                             pair.second instanceof Panel panel) {
                         if(originView != PanelHolder.this) {
-                            addPanel(panel);
+                            originView.removePanel(panel);
+                            showPanel(panel);
                             return true;
                         }
                     }
@@ -148,6 +138,7 @@ public class PanelHolder extends Fragment implements PanelIconsAdapter.PanelSele
             FragmentTransaction ft = getParentFragmentManager().beginTransaction();
             ft.remove(panel.getFragment());
             ft.commit();
+            getParentFragmentManager().executePendingTransactions();
         }
     }
 }

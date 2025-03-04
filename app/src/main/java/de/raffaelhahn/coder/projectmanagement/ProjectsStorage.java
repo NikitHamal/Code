@@ -24,11 +24,12 @@ public class ProjectsStorage {
         return new ArrayList<>();
     }
 
-    public static void addProject(Context context, Project project) {
+    public static Project addProject(Context context, Project project) {
         List<Project> projects = getProjects(context);
         projects.removeIf(p -> p.getPath().equals(project.getPath()));
         projects.add(project);
         saveProjects(context, projects);
+        return project;
     }
 
     public static void saveProjects(Context context, List<Project> projects) {

@@ -5,32 +5,33 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
-
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/fileTreeContainer"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="0.25"/>
-
-    <View
-        android:id="@+id/divider1"
-        android:layout_width="8dp"
-        android:layout_height="match_parent"
-        android:background="#000000" />
+    tools:context=".MainActivity"
+    android:orientation="vertical">
     
     <LinearLayout
-        android:id="@+id/rightPane"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:layout_weight="0.75">
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.70"
+        android:orientation="horizontal">
+
+        <androidx.fragment.app.FragmentContainerView
+            android:name="de.raffaelhahn.coder.panels.PanelHolder"
+            android:tag="leftPanel"
+            android:id="@+id/leftPanelHolder"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.25"/>
+
+        <View
+            android:id="@+id/dividerLeftPanel"
+            android:layout_width="8dp"
+            android:layout_height="match_parent"
+            android:background="#000000" />
 
         <ViewSwitcher
             android:id="@+id/codeEditorSwitcher"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:orientation="vertical"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
             android:layout_weight="0.70">
 
             <LinearLayout
@@ -76,22 +77,21 @@
 
         </ViewSwitcher>
 
-
-
-        <View
-            android:id="@+id/divider2"
-            android:layout_width="match_parent"
-            android:layout_height="8dp"
-            android:background="#000000" />
-
-        <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/terminalContainer"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="0.3"/>
-
     </LinearLayout>
 
+    <View
+        android:id="@+id/dividerBottomPanel"
+        android:layout_width="match_parent"
+        android:layout_height="8dp"
+        android:background="#000000" />
 
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/bottomPanelHolder"
+        android:name="de.raffaelhahn.coder.panels.PanelHolder"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.3"
+        android:tag="bottomPanel"
+        />
 
 </LinearLayout>

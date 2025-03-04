@@ -1,8 +1,5 @@
 package de.raffaelhahn.coder;
 
-import static androidx.core.view.ViewCompat.setSystemGestureExclusionRects;
-
-import android.graphics.Rect;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.PointerIcon;
@@ -23,24 +20,24 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
-import java.util.List;
-
 import de.raffaelhahn.coder.filetree.FileTreeCallback;
 import de.raffaelhahn.coder.filetree.FileTreeFragment;
 import de.raffaelhahn.coder.filetree.FileTreeNode;
 import de.raffaelhahn.coder.editor.CodeEditorPagerAdapter;
+import de.raffaelhahn.coder.panels.Panel;
+import de.raffaelhahn.coder.panels.PanelHolder;
 import de.raffaelhahn.coder.terminal.Terminal;
 import de.raffaelhahn.coder.terminal.TerminalFragment;
-import de.raffaelhahn.coder.terminal.TerminalInstaller;
 import lombok.Getter;
 
 public class MainActivity extends AppCompatActivity implements FileTreeCallback {
 
-    private FragmentContainerView fileTreeContainer;
-    private FragmentContainerView terminalContainer;
+    private FragmentContainerView leftPanelHolderContainer;
+    private PanelHolder leftPanelHolder;
+    private FragmentContainerView bottomPanelHolderContainer;
+    private PanelHolder bottomPanelHolder;
     private ViewPager2 codeEditorViewPager;
     private CodeEditorPagerAdapter codeEditorPagerAdapter;
-    private FileTreeFragment fileTreeFragment;
     private TerminalFragment terminalFragment;
     private TabLayout editorTabs;
     private ViewSwitcher codeEditorSwitcher;
@@ -70,26 +67,18 @@ public class MainActivity extends AppCompatActivity implements FileTreeCallback 
 
         codeEditorPagerAdapter = new CodeEditorPagerAdapter(this);
 
-        fileTreeContainer = findViewById(R.id.fileTreeContainer);
-        terminalContainer = findViewById(R.id.terminalContainer);
+        leftPanelHolderContainer = findViewById(R.id.leftPanelHolder);
+        leftPanelHolder = leftPanelHolderContainer.getFragment();
+        bottomPanelHolderContainer = findViewById(R.id.bottomPanelHolder);
+        bottomPanelHolder = bottomPanelHolderContainer.getFragment();
         codeEditorViewPager = findViewById(R.id.codeEditorViewPager);
         codeEditorSwitcher = findViewById(R.id.codeEditorSwitcher);
         editorTabs = findViewById(R.id.codeEditorTabs);
         codeEditorViewPager.setAdapter(codeEditorPagerAdapter);
         codeEditorViewPager.setUserInputEnabled(false);
 
-        fileTreeFragment = FileTreeFragment.newInstance(path);
+        //fileTreeFragment = FileTreeFragment.newInstance(path);
         terminalFragment = new TerminalFragment();
-
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.fileTreeContainer, fileTreeFragment)
-                .commit();
-
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.terminalContainer, terminalFragment)
-                .commit();
 
         new TabLayoutMediator(editorTabs, codeEditorViewPager, (tab, position) -> {
             tab.setCustomView(R.layout.editor_tab_item);
@@ -101,8 +90,8 @@ public class MainActivity extends AppCompatActivity implements FileTreeCallback 
                 codeEditorPagerAdapter.notifyDataSetChanged();
             });
         }).attach();
-        makeDraggable(findViewById(R.id.divider1), fileTreeContainer, findViewById(R.id.rightPane), true);
-        makeDraggable(findViewById(R.id.divider2), (View) codeEditorSwitcher.getParent(), terminalContainer, false);
+        makeDraggable(findViewById(R.id.dividerLeftPanel), leftPanelHolderContainer, findViewById(R.id.codeEditorSwitcher), true);
+        makeDraggable(findViewById(R.id.dividerBottomPanel), (View) codeEditorSwitcher.getParent(), bottomPanelHolderContainer, false);
 
         codeEditorPagerAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
             @Override
@@ -111,7 +100,10 @@ public class MainActivity extends AppCompatActivity implements FileTreeCallback 
             }
         });
 
+
         showOrHideNoFileSelectedMessage();
+        leftPanelHolder.showPanel(new Panel(R.drawable.file_tree, "File Tree", FileTreeFragment.class));
+        bottomPanelHolder.showPanel(new Panel(R.drawable.terminal, "Terminal", TerminalFragment.class));
     }
 
     public void showOrHideNoFileSelectedMessage() {

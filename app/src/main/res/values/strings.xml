@@ -19,6 +19,8 @@
     <string name="delete">Delete</string>
     <string name="rename">Rename</string>
     <string name="new_submenu">New</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 
 </resources>

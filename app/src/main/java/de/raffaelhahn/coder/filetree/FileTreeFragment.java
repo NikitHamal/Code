@@ -19,7 +19,9 @@ import android.view.ViewGroup;
 
 import java.io.File;
 
+import de.raffaelhahn.coder.CoderApp;
 import de.raffaelhahn.coder.R;
+import de.raffaelhahn.coder.projectmanagement.Project;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -28,8 +30,6 @@ import de.raffaelhahn.coder.R;
  */
 public class FileTreeFragment extends Fragment implements FileTreeCallback {
 
-    private static final String ARG_PATH = "paramPath";
-    private String rootPath;
     private RecyclerView recyclerView;
     private FileTreeAdapter adapter;
     private FileTreeNode rootNode;
@@ -38,20 +38,9 @@ public class FileTreeFragment extends Fragment implements FileTreeCallback {
         // Required empty public constructor
     }
 
-    public static FileTreeFragment newInstance(String path) {
-        FileTreeFragment fragment = new FileTreeFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PATH, path);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            rootPath = getArguments().getString(ARG_PATH);
-        }
     }
 
     @Override
@@ -72,6 +61,12 @@ public class FileTreeFragment extends Fragment implements FileTreeCallback {
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         registerForContextMenu(recyclerView);
+
+        Project currentProject = ((CoderApp) getActivity().getApplication()).getFileAppContext().getCurrentProject();
+        if(currentProject == null) {
+            return;
+        }
+        String rootPath = currentProject.getPath();
 
         setRootFile(new File(rootPath));
     }

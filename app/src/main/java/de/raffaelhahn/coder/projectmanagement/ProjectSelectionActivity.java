@@ -26,6 +26,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 
+import de.raffaelhahn.coder.CoderApp;
 import de.raffaelhahn.coder.MainActivity;
 import de.raffaelhahn.coder.R;
 import de.raffaelhahn.coder.intro.IntroActivity;
@@ -49,7 +50,7 @@ public class ProjectSelectionActivity extends AppCompatActivity {
             return insets;
         });
 
-        if(!Utils.checkStoragePermissions(this)) {
+        if (!Utils.checkStoragePermissions(this)) {
             startActivity(new Intent(this, IntroActivity.class));
             finish();
             return;
@@ -64,13 +65,13 @@ public class ProjectSelectionActivity extends AppCompatActivity {
         });
 
         projectsRecyclerView = findViewById(R.id.projectSelectionRecyclerView);
-        projectsAdapter = new ProjectsAdapter(project -> openProject(project.getPath()));
+        projectsAdapter = new ProjectsAdapter(this::openProject);
         ArrayList<Project> projects = new ArrayList<>(ProjectsStorage.getProjects(this));
         projects.sort((o1, o2) -> {
-            if(o1.lastOpened == null) {
+            if (o1.lastOpened == null) {
                 return 1;
             }
-            if(o2.lastOpened == null) {
+            if (o2.lastOpened == null) {
                 return -1;
             }
             return o1.lastOpened.compareTo(o2.lastOpened) * -1;
@@ -96,15 +97,16 @@ public class ProjectSelectionActivity extends AppCompatActivity {
             String fileSystemPath = getFileSystemPath(treeUri);
             Log.d("SelectedDirectory", "Path: " + fileSystemPath);
 
-            ProjectsStorage.addProject(this, new Project(fileSystemPath, LocalDateTime.now()));
+            Project project = ProjectsStorage.addProject(this, new Project(fileSystemPath, LocalDateTime.now()));
 
-            openProject(fileSystemPath);
+            openProject(project);
         }
     }
 
-    public void openProject(String path) {
+    public void openProject(Project project) {
         Intent i = new Intent(this, MainActivity.class);
-        i.putExtra("path", path);
+        i.putExtra("path", project.getPath());
+        ((CoderApp) getApplication()).getFileAppContext().setCurrentProject(project);
         startActivity(i);
     }
 

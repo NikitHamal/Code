@@ -11,4 +11,6 @@
     <string name="intro_terminal_install_text">The terminal will now be installed. Don\'t close the app until this process has finished.</string>
     <string name="intro_terminal_install_text_done">The terminal installation has finished. Please continue!</string>
     <string name="intro_continue">Continue</string>
+    <string name="no_file_selected_title">No file selected</string>
+    <string name="no_file_selected_description">Choose a file from the tree or create a new file to start editing.</string>
 </resources>

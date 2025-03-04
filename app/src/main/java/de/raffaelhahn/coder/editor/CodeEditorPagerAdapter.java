@@ -31,4 +31,5 @@ public class CodeEditorPagerAdapter extends FragmentStateAdapter {
         return paths.size();
     }
 
+
 }

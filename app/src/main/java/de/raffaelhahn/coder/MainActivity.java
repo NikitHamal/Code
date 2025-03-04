@@ -9,6 +9,7 @@ import android.view.PointerIcon;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.ViewSwitcher;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,6 +17,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.FragmentContainerView;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.tabs.TabLayout;
@@ -41,6 +43,7 @@ public class MainActivity extends AppCompatActivity implements FileTreeCallback 
     private FileTreeFragment fileTreeFragment;
     private TerminalFragment terminalFragment;
     private TabLayout editorTabs;
+    private ViewSwitcher codeEditorSwitcher;
 
     private String path;
 
@@ -70,8 +73,10 @@ public class MainActivity extends AppCompatActivity implements FileTreeCallback 
         fileTreeContainer = findViewById(R.id.fileTreeContainer);
         terminalContainer = findViewById(R.id.terminalContainer);
         codeEditorViewPager = findViewById(R.id.codeEditorViewPager);
+        codeEditorSwitcher = findViewById(R.id.codeEditorSwitcher);
         editorTabs = findViewById(R.id.codeEditorTabs);
         codeEditorViewPager.setAdapter(codeEditorPagerAdapter);
+        codeEditorViewPager.setUserInputEnabled(false);
 
         fileTreeFragment = FileTreeFragment.newInstance(path);
         terminalFragment = new TerminalFragment();
@@ -96,9 +101,25 @@ public class MainActivity extends AppCompatActivity implements FileTreeCallback 
                 codeEditorPagerAdapter.notifyDataSetChanged();
             });
         }).attach();
-        codeEditorViewPager.setUserInputEnabled(false);
         makeDraggable(findViewById(R.id.divider1), fileTreeContainer, findViewById(R.id.rightPane), true);
-        makeDraggable(findViewById(R.id.divider2), (View) codeEditorViewPager.getParent(), terminalContainer, false);
+        makeDraggable(findViewById(R.id.divider2), (View) codeEditorSwitcher.getParent(), terminalContainer, false);
+
+        codeEditorPagerAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onChanged() {
+                showOrHideNoFileSelectedMessage();
+            }
+        });
+
+        showOrHideNoFileSelectedMessage();
+    }
+
+    public void showOrHideNoFileSelectedMessage() {
+        if(codeEditorPagerAdapter.getPaths().isEmpty()) {
+            codeEditorSwitcher.setDisplayedChild(1);
+        } else {
+            codeEditorSwitcher.setDisplayedChild(0);
+        }
     }
 
     public void makeDraggable(View divider, View viewA, View viewB, boolean horizontal){
@@ -151,7 +172,7 @@ public class MainActivity extends AppCompatActivity implements FileTreeCallback 
             } else if (event.getAction() == MotionEvent.ACTION_HOVER_EXIT) {
                 v.setPointerIcon(PointerIcon.getSystemIcon(MainActivity.this, PointerIcon.TYPE_DEFAULT));
             }
-            return false; // Ereignis weiterleiten
+            return false;
         });
     }
 
@@ -159,7 +180,7 @@ public class MainActivity extends AppCompatActivity implements FileTreeCallback 
     public void onFileTreeNodeSelected(FileTreeNode fileTreeNode) {
         String path = fileTreeNode.getFile().getAbsolutePath();
         if(fileTreeNode.getFile().isFile()) {
-            if(codeEditorPagerAdapter.getPaths().indexOf(path) == -1) {
+            if(!codeEditorPagerAdapter.getPaths().contains(path)) {
                 codeEditorPagerAdapter.getPaths().add(path);
                 codeEditorPagerAdapter.notifyDataSetChanged();
                 codeEditorViewPager.setCurrentItem(codeEditorPagerAdapter.getPaths().size() - 1);

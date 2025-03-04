@@ -26,24 +26,57 @@
         android:orientation="vertical"
         android:layout_weight="0.75">
 
-        <LinearLayout
+        <ViewSwitcher
+            android:id="@+id/codeEditorSwitcher"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:orientation="vertical"
             android:layout_weight="0.70">
 
-            <com.google.android.material.tabs.TabLayout
-                android:id="@+id/codeEditorTabs"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
-            <androidx.viewpager2.widget.ViewPager2
-                android:id="@+id/codeEditorViewPager"
-                xmlns:android="http://schemas.android.com/apk/res/android"
+                <com.google.android.material.tabs.TabLayout
+                    android:id="@+id/codeEditorTabs"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+                <androidx.viewpager2.widget.ViewPager2
+                    android:id="@+id/codeEditorViewPager"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:layout_margin="32dp">
 
-        </LinearLayout>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/no_file_selected_title"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/no_file_selected_description"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                    android:textSize="24sp" />
+
+            </LinearLayout>
+
+        </ViewSwitcher>
+
+
 
         <View
             android:id="@+id/divider2"

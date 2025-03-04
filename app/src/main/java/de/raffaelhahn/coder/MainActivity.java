@@ -87,7 +87,17 @@ public class MainActivity extends AppCompatActivity implements FileTreeCallback 
             tab.setText(codeEditorPagerAdapter.getPaths().get(position));
             tab.getCustomView().findViewById(R.id.editorTabCloseButton).setOnClickListener(v -> {
                 codeEditorPagerAdapter.getPaths().remove(position);
-                codeEditorPagerAdapter.notifyDataSetChanged();
+                codeEditorPagerAdapter.notifyItemRemoved(position);
+            });
+            tab.getCustomView().setOnTouchListener((v, event) -> {
+                if (event.getAction() == MotionEvent.ACTION_DOWN &&
+                        (event.getButtonState() & MotionEvent.BUTTON_TERTIARY) != 0) {
+                    codeEditorPagerAdapter.getPaths().remove(position);
+                    codeEditorPagerAdapter.notifyItemRemoved(position);
+                    v.performClick();
+                    return true;
+                }
+                return false;
             });
         }).attach();
         makeDraggable(findViewById(R.id.dividerLeftPanel), leftPanelHolderContainer, findViewById(R.id.codeEditorSwitcher), true);

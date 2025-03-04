@@ -29,6 +29,7 @@ import com.termux.view.TerminalViewClient;
 import java.io.File;
 
 import de.raffaelhahn.coder.CoderApp;
+import de.raffaelhahn.coder.MainActivity;
 import de.raffaelhahn.coder.R;
 
 public class TerminalFragment extends Fragment implements TerminalViewClient {
@@ -44,7 +45,7 @@ public class TerminalFragment extends Fragment implements TerminalViewClient {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        terminal = ((CoderApp) getActivity().getApplication()).getTerminal();
+        terminal = ((MainActivity) getActivity()).getTerminal();
     }
 
     @Override

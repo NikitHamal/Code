@@ -27,7 +27,6 @@ import lombok.Setter;
 
 public class Terminal {
 
-    private CoderApp application;
     private String[] environment;
 
     @Getter
@@ -42,12 +41,11 @@ public class Terminal {
      *
      * @param application CoderApp
      */
-    public Terminal(CoderApp application) {
+    public Terminal() {
         File homeDir = new File(TermuxConstants.TERMUX_HOME_DIR_PATH);
         if(!homeDir.exists()) {
             FileUtils.createDirectoryFile("shell home", TermuxConstants.TERMUX_HOME_DIR_PATH);
         }
-        this.application = application;
 
         environment = setupEnvironment(false);
 

@@ -30,6 +30,7 @@ import de.raffaelhahn.coder.editor.CodeEditorPagerAdapter;
 import de.raffaelhahn.coder.terminal.Terminal;
 import de.raffaelhahn.coder.terminal.TerminalFragment;
 import de.raffaelhahn.coder.terminal.TerminalInstaller;
+import lombok.Getter;
 
 public class MainActivity extends AppCompatActivity implements FileTreeCallback {
 
@@ -43,6 +44,9 @@ public class MainActivity extends AppCompatActivity implements FileTreeCallback 
 
     private String path;
 
+    @Getter
+    private Terminal terminal;
+
 
 
     @Override
@@ -55,6 +59,8 @@ public class MainActivity extends AppCompatActivity implements FileTreeCallback 
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        terminal = new Terminal();
 
         Bundle b = getIntent().getExtras();
         path = b.getString("path");

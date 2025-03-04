@@ -29,19 +29,14 @@ import lombok.Getter;
 public class CoderApp extends Application {
     @Getter
     private ExecutorService executorService;
-    @Getter
-    private Terminal terminal;
     @Override
     public void onCreate() {
         super.onCreate();
 
         executorService = Executors.newFixedThreadPool(4);
 
-        terminal = new Terminal(this);
-
         FileProviderRegistry.getInstance().addFileProvider(new AssetsFileResolver(getAssets()));
         ThemeRegistry themeRegistry = ThemeRegistry.getInstance();
-
 
         String themePath = "textmate/abyss.json";
         ThemeModel themeModel = new ThemeModel(IThemeSource.fromInputStream(FileProviderRegistry.getInstance().tryGetInputStream(themePath), themePath, null), "Abyss");

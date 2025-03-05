@@ -1,33 +1,28 @@
 package de.raffaelhahn.coder.filetree;
 
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import java.io.File;
 
 import de.raffaelhahn.coder.CoderApp;
+import de.raffaelhahn.coder.MainActivity;
 import de.raffaelhahn.coder.R;
 import de.raffaelhahn.coder.projectmanagement.Project;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link FileTreeFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class FileTreeFragment extends Fragment implements FileTreeCallback {
 
     private RecyclerView recyclerView;
@@ -41,6 +36,13 @@ public class FileTreeFragment extends Fragment implements FileTreeCallback {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        adapter = new FileTreeAdapter(this, this);
+        String rootPath = ((MainActivity) requireActivity()).getPath();
+        if(rootPath == null) {
+            return;
+        }
+        setRootFile(new File(rootPath));
     }
 
     @Override
@@ -56,19 +58,11 @@ public class FileTreeFragment extends Fragment implements FileTreeCallback {
         super.onViewCreated(view, savedInstanceState);
 
         recyclerView = view.findViewById(R.id.fileTreeRecyclerView);
-        adapter = new FileTreeAdapter(this);
 
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        registerForContextMenu(recyclerView);
 
-        Project currentProject = ((CoderApp) getActivity().getApplication()).getFileAppContext().getCurrentProject();
-        if(currentProject == null) {
-            return;
-        }
-        String rootPath = currentProject.getPath();
-
-        setRootFile(new File(rootPath));
+        updateTree();
     }
 
     @Override
@@ -76,19 +70,23 @@ public class FileTreeFragment extends Fragment implements FileTreeCallback {
                                     ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
 
-        SubMenu subMenuNew = menu.addSubMenu(R.string.new_submenu).setIcon(R.drawable.add);
-        subMenuNew.add(R.string.create_new_file).setIcon(R.drawable.file);
-        subMenuNew.add(R.string.create_new_directory).setIcon(R.drawable.folder);
-
-        menu.add(R.string.rename);
-        menu.add(R.string.delete);
-        /*MenuInflater inflater = requireActivity().getMenuInflater();
-        inflater.inflate(R.menu.file_tree_context_menu, menu);*/
+        if(v.getTag() instanceof FileTreeNode fileNode) {
+            if(fileNode.isDirectory()) {
+                SubMenu subMenuNew = menu.addSubMenu(R.string.new_submenu).setIcon(R.drawable.add);
+                subMenuNew.add(R.string.create_new_file).setIcon(R.drawable.file);
+                subMenuNew.add(R.string.create_new_directory).setIcon(R.drawable.folder);
+            }
+            menu.add(R.string.rename);
+            menu.add(R.string.delete);
+        }
     }
 
     private void setRootFile(File file) {
         rootNode = new FileTreeNode(file);
         adapter.setFiles(rootNode);
+    }
+
+    public void updateTree() {
         adapter.notifyDataSetChanged();
     }
 

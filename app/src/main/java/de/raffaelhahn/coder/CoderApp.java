@@ -4,24 +4,17 @@ import android.app.Application;
 
 import org.eclipse.tm4e.core.registry.IThemeSource;
 
-import de.raffaelhahn.coder.filemanagement.FileAppContext;
 import io.github.rosemoe.sora.langs.textmate.registry.FileProviderRegistry;
 import io.github.rosemoe.sora.langs.textmate.registry.GrammarRegistry;
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry;
 import io.github.rosemoe.sora.langs.textmate.registry.model.ThemeModel;
 import io.github.rosemoe.sora.langs.textmate.registry.provider.AssetsFileResolver;
-import lombok.Getter;
 
 public class CoderApp extends Application {
-
-    @Getter
-    private FileAppContext fileAppContext;
 
     @Override
     public void onCreate() {
         super.onCreate();
-
-        fileAppContext = new FileAppContext();
 
         FileProviderRegistry.getInstance().addFileProvider(new AssetsFileResolver(getAssets()));
         ThemeRegistry themeRegistry = ThemeRegistry.getInstance();

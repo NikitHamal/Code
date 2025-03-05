@@ -38,10 +38,10 @@ public class MainActivity extends AppCompatActivity implements FileTreeCallback 
     private PanelHolder bottomPanelHolder;
     private ViewPager2 codeEditorViewPager;
     private CodeEditorPagerAdapter codeEditorPagerAdapter;
-    private TerminalFragment terminalFragment;
     private TabLayout editorTabs;
     private ViewSwitcher codeEditorSwitcher;
 
+    @Getter
     private String path;
 
     @Getter
@@ -77,9 +77,6 @@ public class MainActivity extends AppCompatActivity implements FileTreeCallback 
         codeEditorViewPager.setAdapter(codeEditorPagerAdapter);
         codeEditorViewPager.setUserInputEnabled(false);
 
-        //fileTreeFragment = FileTreeFragment.newInstance(path);
-        terminalFragment = new TerminalFragment();
-
         new TabLayoutMediator(editorTabs, codeEditorViewPager, (tab, position) -> {
             tab.setCustomView(R.layout.editor_tab_item);
             TextView titleView = tab.getCustomView().findViewById(R.id.editorTabText);
@@ -106,6 +103,11 @@ public class MainActivity extends AppCompatActivity implements FileTreeCallback 
         codeEditorPagerAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
             @Override
             public void onChanged() {
+                showOrHideNoFileSelectedMessage();
+            }
+
+            @Override
+            public void onItemRangeRemoved(int positionStart, int itemCount) {
                 showOrHideNoFileSelectedMessage();
             }
         });

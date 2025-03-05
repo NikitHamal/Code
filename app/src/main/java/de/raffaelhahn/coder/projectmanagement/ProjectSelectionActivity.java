@@ -106,7 +106,6 @@ public class ProjectSelectionActivity extends AppCompatActivity {
     public void openProject(Project project) {
         Intent i = new Intent(this, MainActivity.class);
         i.putExtra("path", project.getPath());
-        ((CoderApp) getApplication()).getFileAppContext().setCurrentProject(project);
         startActivity(i);
     }
 

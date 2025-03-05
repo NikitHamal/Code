@@ -7,6 +7,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ public class FileTreeAdapter extends RecyclerView.Adapter<FileTreeAdapter.ViewHo
     private List<FileTreeNode> files = new ArrayList<>();
     private int rootNameCount;
 
+    private final Fragment fragment;
     private final FileTreeCallback callback;
 
     @NonNull
@@ -51,6 +53,9 @@ public class FileTreeAdapter extends RecyclerView.Adapter<FileTreeAdapter.ViewHo
         holder.fileName.setText(fileNode.getFile().getName());
 
         holder.itemView.setOnClickListener(v -> callback.onFileTreeNodeSelected(fileNode));
+
+        holder.itemView.setTag(fileNode);
+        fragment.registerForContextMenu(holder.itemView);
     }
 
     public void setFiles(FileTreeNode rootNode) {

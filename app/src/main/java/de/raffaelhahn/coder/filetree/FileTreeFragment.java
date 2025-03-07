@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,9 +22,11 @@ import java.io.File;
 import de.raffaelhahn.coder.CoderApp;
 import de.raffaelhahn.coder.MainActivity;
 import de.raffaelhahn.coder.R;
+import de.raffaelhahn.coder.files.FileCreationDialog;
+import de.raffaelhahn.coder.files.FileManager;
 import de.raffaelhahn.coder.projectmanagement.Project;
 
-public class FileTreeFragment extends Fragment implements FileTreeCallback {
+public class FileTreeFragment extends Fragment implements FileTreeCallback, FileManager.FileChangeListener {
 
     private RecyclerView recyclerView;
     private FileTreeAdapter adapter;
@@ -43,6 +46,13 @@ public class FileTreeFragment extends Fragment implements FileTreeCallback {
             return;
         }
         setRootFile(new File(rootPath));
+        ((MainActivity)getActivity()).getFileManager().addFileListener(this);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        ((MainActivity)getActivity()).getFileManager().removeFileListener(this);
     }
 
     @Override
@@ -73,7 +83,12 @@ public class FileTreeFragment extends Fragment implements FileTreeCallback {
         if(v.getTag() instanceof FileTreeNode fileNode) {
             if(fileNode.isDirectory()) {
                 SubMenu subMenuNew = menu.addSubMenu(R.string.new_submenu).setIcon(R.drawable.add);
-                subMenuNew.add(R.string.create_new_file).setIcon(R.drawable.file);
+                subMenuNew.add(R.string.create_new_file).setIcon(R.drawable.file).setOnMenuItemClickListener(item -> {
+                    FileCreationDialog
+                            .newInstance(fileNode.getFile().getAbsolutePath())
+                            .show(getParentFragmentManager(), "file_creation_dialog");
+                    return true;
+                });
                 subMenuNew.add(R.string.create_new_directory).setIcon(R.drawable.folder);
             }
             menu.add(R.string.rename);
@@ -83,11 +98,12 @@ public class FileTreeFragment extends Fragment implements FileTreeCallback {
 
     private void setRootFile(File file) {
         rootNode = new FileTreeNode(file);
+        //rootNode.setShowChildren(true);
         adapter.setFiles(rootNode);
     }
 
     public void updateTree() {
-        adapter.notifyDataSetChanged();
+        requireActivity().runOnUiThread(() -> adapter.notifyDataSetChanged());
     }
 
     @Override
@@ -115,5 +131,48 @@ public class FileTreeFragment extends Fragment implements FileTreeCallback {
         ((FileTreeCallback) getActivity()).onFileTreeNodeCreateTriggered(parentFileTreeNode, fileName);
     }
 
+    private void refreshParent(String path) {
+        String parentPath = path.substring(0, path.lastIndexOf('/'));
+        FileTreeNode parentNode = rootNode.findNode(parentPath);
+        if(parentNode != null) {
+            parentNode.refreshChildren();
+            adapter.setFiles(rootNode);
+            updateTree();
+        }
+    }
 
+    @Override
+    public void onFileCreate(String path) {
+        refreshParent(path);
+    }
+
+    @Override
+    public void onFileDelete(String path) {
+        refreshParent(path);
+    }
+
+    @Override
+    public void onFileModify(String path) {
+        refreshParent(path);
+    }
+
+    @Override
+    public void onFileMovedFrom(String path) {
+        refreshParent(path);
+    }
+
+    @Override
+    public void onFileMovedTo(String path) {
+        refreshParent(path);
+    }
+
+    @Override
+    public void onFileAttributeChange(String path) {
+        refreshParent(path);
+    }
+
+    @Override
+    public void onOtherEvent(String path) {
+        //refreshParent(path);
+    }
 }

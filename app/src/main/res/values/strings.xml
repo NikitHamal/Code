@@ -16,11 +16,15 @@
 
     <string name="create_new_file">New file</string>
     <string name="create_new_directory">New directory</string>
+    <string name="file_name">File name</string>
+    <string name="directory_name">Directory name</string>
     <string name="delete">Delete</string>
     <string name="rename">Rename</string>
     <string name="new_submenu">New</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-
+    <string name="create_file_button">Create</string>
+    <string name="cancel_button">Cancel</string>
+    <string name="file_creation_error_title">Oops..</string>
+    <string name="file_creation_error_description">The file/folder could not be created. \nError message: %s</string>
+    <string name="file_already_exists">File does already exist</string>
 
 </resources>

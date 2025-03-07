@@ -20,6 +20,7 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
+import de.raffaelhahn.coder.files.FileManager;
 import de.raffaelhahn.coder.filetree.FileTreeCallback;
 import de.raffaelhahn.coder.filetree.FileTreeFragment;
 import de.raffaelhahn.coder.filetree.FileTreeNode;
@@ -46,8 +47,8 @@ public class MainActivity extends AppCompatActivity implements FileTreeCallback 
 
     @Getter
     private Terminal terminal;
-
-
+    @Getter
+    private FileManager fileManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +65,8 @@ public class MainActivity extends AppCompatActivity implements FileTreeCallback 
 
         Bundle b = getIntent().getExtras();
         path = b.getString("path");
+        fileManager = new FileManager(path);
+        fileManager.startObserving();
 
         codeEditorPagerAdapter = new CodeEditorPagerAdapter(this);
 

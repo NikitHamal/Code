@@ -45,7 +45,9 @@
                     android:layout_height="wrap_content"
                     app:tabMaxWidth="0dp"
                     app:tabMode="scrollable"
-                    app:tabGravity="fill"/>
+                    app:tabGravity="fill"
+                    app:tabUnboundedRipple="false"
+                    app:tabMinWidth="1dp"/>
 
                 <androidx.viewpager2.widget.ViewPager2
                     android:id="@+id/codeEditorViewPager"

@@ -36,6 +36,8 @@ public class FileTreeAdapter extends RecyclerView.Adapter<FileTreeAdapter.ViewHo
     @Override
     public void onBindViewHolder(@NonNull FileTreeAdapter.ViewHolder holder, int position) {
         FileTreeNode fileNode = files.get(position);
+        int fileNameCount = fileNode.getFile().toPath().getNameCount();
+        int depth = fileNameCount - rootNameCount;
         if(fileNode.isDirectory()) {
             holder.fileIcon.setImageResource(R.drawable.folder);
             holder.fileChevron.setVisibility(View.VISIBLE);
@@ -49,7 +51,7 @@ public class FileTreeAdapter extends RecyclerView.Adapter<FileTreeAdapter.ViewHo
             holder.fileChevron.setVisibility(View.INVISIBLE);
         }
 
-        holder.spacing.getLayoutParams().width = (fileNode.getFile().toPath().getNameCount() - rootNameCount) * Utils.dpToPx(holder.itemView.getContext(), 16);
+        holder.spacing.getLayoutParams().width = depth * Utils.dpToPx(holder.itemView.getContext(), 32);
         holder.fileName.setText(fileNode.getFile().getName());
 
         holder.itemView.setOnClickListener(v -> callback.onFileTreeNodeSelected(fileNode));
@@ -67,6 +69,16 @@ public class FileTreeAdapter extends RecyclerView.Adapter<FileTreeAdapter.ViewHo
     @Override
     public int getItemCount() {
         return files.size();
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return files.get(position).getFile().hashCode();
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return position;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

@@ -18,6 +18,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.textfield.TextInputLayout;
 
 import de.raffaelhahn.coder.R;
 import lombok.NoArgsConstructor;
@@ -27,12 +28,14 @@ public class FileCreationDialog extends DialogFragment {
 
     private EditText editText;
     private String path;
+    private boolean directory;
 
-    public static FileCreationDialog newInstance(String path) {
+    public static FileCreationDialog newInstance(String path, boolean directory) {
         FileCreationDialog f = new FileCreationDialog();
 
         Bundle args = new Bundle();
         args.putString("path", path);
+        args.putBoolean("directory", directory);
         f.setArguments(args);
 
         return f;
@@ -62,9 +65,12 @@ public class FileCreationDialog extends DialogFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         path = getArguments().getString("path", null);
+        directory = getArguments().getBoolean("directory", false);
         Toolbar toolbar = view.findViewById(R.id.toolbar);
         toolbar.setNavigationOnClickListener(view1 -> dismiss());
         view.findViewById(R.id.cancelButton).setOnClickListener(view1 -> dismiss());
+
+        TextInputLayout textInputLayout = view.findViewById(R.id.fileName);
 
         editText = view.findViewById(R.id.fileNameEditText);
 
@@ -78,11 +84,19 @@ public class FileCreationDialog extends DialogFragment {
 
         view.findViewById(R.id.saveButton).setOnClickListener(view1 -> createFile());
 
+        if(directory) {
+            textInputLayout.setHint(R.string.directory_name);
+            toolbar.setTitle(R.string.create_new_directory);
+        } else {
+            textInputLayout.setHint(R.string.file_name);
+            toolbar.setTitle(R.string.create_new_file);
+        }
+
     }
 
     public void createFile() {
         String fileName = editText.getText().toString();
-        String error = FileManager.createFile(requireContext(), path + "/" + fileName, false);
+        String error = FileManager.createFile(requireContext(), path + "/" + fileName, directory);
 
         if(error != null) {
             new MaterialAlertDialogBuilder(new ContextThemeWrapper(requireContext(), R.style.Theme_Coder), R.style.MaterialAlertDialogCenterStyle)

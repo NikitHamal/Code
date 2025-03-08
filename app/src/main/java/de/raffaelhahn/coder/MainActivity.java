@@ -197,19 +197,4 @@ public class MainActivity extends AppCompatActivity implements FileTreeCallback 
         }
     }
 
-
-    @Override
-    public void onFileTreeNodeDeleteTriggered(FileTreeNode fileTreeNode) {
-
-    }
-
-    @Override
-    public void onFileTreeNodeRenameTriggered(FileTreeNode fileTreeNode, String newName) {
-
-    }
-
-    @Override
-    public void onFileTreeNodeCreateTriggered(FileTreeNode parentFileTreeNode, String fileName) {
-
-    }
 }

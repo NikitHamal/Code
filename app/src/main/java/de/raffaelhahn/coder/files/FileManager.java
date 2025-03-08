@@ -3,11 +3,15 @@ package de.raffaelhahn.coder.files;
 import android.content.Context;
 import android.os.FileObserver;
 
+import org.apache.commons.io.FileUtils;
+
+import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.stream.Collectors;
 
 import de.raffaelhahn.coder.R;
@@ -15,6 +19,17 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class FileManager {
+
+    /**
+     * Event type: A new subdirectory was created under the monitored directory<br>
+     * For some reason this constant is undocumented in {@link FileObserver}.
+     */
+    private static final int CREATE_DIR = 0x40000100;
+    /**
+     * Event type: A subdirectory was deleted from the monitored directory<br>
+     * For some reason this constant is undocumented in {@link FileObserver}.
+     */
+    private static final int DELETE_DIR = 0x40000200;
 
     private final String path;
     private final ArrayList<FileChangeListener> listeners = new ArrayList<>();
@@ -25,9 +40,13 @@ public class FileManager {
             @Override
             public void onEvent(int event, String path) {
                 switch (event) {
+                    case CREATE_DIR:
                     case FileObserver.CREATE:
                         listeners.stream().collect(Collectors.toList()).forEach(listener -> listener.onFileCreate(path));
+                        stopWatching();
+                        startWatching();
                         break;
+                    case DELETE_DIR:
                     case FileObserver.DELETE:
                         listeners.stream().collect(Collectors.toList()).forEach(listener -> listener.onFileDelete(path));
                         break;
@@ -85,13 +104,28 @@ public class FileManager {
         Path pathObj = Paths.get(path);
         try {
             if (isDirectory) {
-                Files.createDirectories(pathObj.getParent());
+                Files.createDirectories(pathObj);
             } else {
                 Files.createDirectories(pathObj.getParent());
                 Files.createFile(pathObj);
             }
         } catch(FileAlreadyExistsException e) {
             return context.getString(R.string.file_already_exists);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return e.getClass().getSimpleName() + ": " + e.getLocalizedMessage();
+        }
+        return null;
+    }
+
+    public static String deleteFile(String path) {
+        Path pathObj = Paths.get(path);
+        try {
+            if (Files.isDirectory(pathObj)) {
+                FileUtils.deleteDirectory(pathObj.toFile());
+            } else {
+                Files.delete(pathObj);
+            }
         } catch (Exception e) {
             e.printStackTrace();
             return e.getClass().getSimpleName() + ": " + e.getLocalizedMessage();

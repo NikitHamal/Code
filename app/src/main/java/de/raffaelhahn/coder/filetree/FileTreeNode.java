@@ -29,7 +29,7 @@ public class FileTreeNode {
                 File[] files = file.listFiles();
                 if (files != null) {
                     for (File f : files) {
-                        children.add(new FileTreeNode(f));
+                        children.add(new FileTreeNode(this, f));
                     }
                 }
             } else {
@@ -47,11 +47,7 @@ public class FileTreeNode {
                         children.add(new FileTreeNode(f));
                     }
                 }
-                for (FileTreeNode child : children) {
-                    if (!child.getFile().exists()) {
-                        children.remove(child);
-                    }
-                }
+                children.removeIf(child -> !child.getFile().exists());
             }
         }
     }
@@ -77,10 +73,22 @@ public class FileTreeNode {
     public List<FileTreeNode> listFilesRecursively() {
         ArrayList<FileTreeNode> result = new ArrayList<>();
         result.add(this);
+        sortChildren();
         for(FileTreeNode child : children) {
             result.addAll(child.listFilesRecursively());
         }
         return result;
+    }
+
+    public void sortChildren() {
+        children.sort((o1, o2) -> {
+            if(o1.isDirectory() && !o2.isDirectory()) {
+                return -1;
+            } else if(!o1.isDirectory() && o2.isDirectory()) {
+                return 1;
+            }
+            return o1.getFile().getName().compareTo(o2.getFile().getName());
+        });
     }
 
 }

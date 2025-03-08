@@ -22,6 +22,7 @@ import io.github.rosemoe.sora.event.ContentChangeEvent;
 import io.github.rosemoe.sora.langs.textmate.TextMateColorScheme;
 import io.github.rosemoe.sora.langs.textmate.TextMateLanguage;
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry;
+import io.github.rosemoe.sora.langs.textmate.registry.model.ThemeModel;
 import io.github.rosemoe.sora.widget.CodeEditor;
 
 /**
@@ -73,7 +74,8 @@ public class CodeEditorFragment extends Fragment {
         codeEditor.setNonPrintablePaintingFlags(
                 CodeEditor.FLAG_DRAW_WHITESPACE_LEADING | CodeEditor.FLAG_DRAW_LINE_SEPARATOR | CodeEditor.FLAG_DRAW_WHITESPACE_IN_SELECTION);
         try {
-            codeEditor.setColorScheme(TextMateColorScheme.create(ThemeRegistry.getInstance()));
+            //codeEditor.setColorScheme(TextMateColorScheme.create(ThemeRegistry.getInstance()));
+            codeEditor.setColorScheme(MaterialYouEditorColorScheme.create(requireContext()));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

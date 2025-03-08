@@ -20,6 +20,8 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
+import java.nio.file.Paths;
+
 import de.raffaelhahn.coder.files.FileManager;
 import de.raffaelhahn.coder.filetree.FileTreeCallback;
 import de.raffaelhahn.coder.filetree.FileTreeFragment;
@@ -80,11 +82,12 @@ public class MainActivity extends AppCompatActivity implements FileTreeCallback 
         codeEditorViewPager.setAdapter(codeEditorPagerAdapter);
         codeEditorViewPager.setUserInputEnabled(false);
 
-        new TabLayoutMediator(editorTabs, codeEditorViewPager, (tab, position) -> {
+        new TabLayoutMediator(editorTabs, codeEditorViewPager,true, false, (tab, position) -> {
             tab.setCustomView(R.layout.editor_tab_item);
             TextView titleView = tab.getCustomView().findViewById(R.id.editorTabText);
-            titleView.setText(codeEditorPagerAdapter.getPaths().get(position));
-            tab.setText(codeEditorPagerAdapter.getPaths().get(position));
+            String fileName = Paths.get(codeEditorPagerAdapter.getPaths().get(position)).getFileName().toString();
+            titleView.setText(fileName);
+            tab.setText(fileName);
             tab.getCustomView().findViewById(R.id.editorTabCloseButton).setOnClickListener(v -> {
                 codeEditorPagerAdapter.getPaths().remove(position);
                 codeEditorPagerAdapter.notifyItemRemoved(position);

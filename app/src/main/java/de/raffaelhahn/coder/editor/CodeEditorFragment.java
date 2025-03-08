@@ -102,11 +102,7 @@ public class CodeEditorFragment extends Fragment {
         try {
             String content = new String(Files.readAllBytes(Paths.get(path)), StandardCharsets.UTF_8);
 
-            long startB = System.currentTimeMillis();
-            //TODO Problem when changing file -> content of old file is written into new file
             codeEditor.setText(content);
-            long endB = System.currentTimeMillis();
-            Log.d("CodeEditorFragment","Time to setText: " + (endB - startB) + "ms");
             codeEditor.subscribeEvent(ContentChangeEvent.class, (event, unsubscribe) -> {
                 if(path == null) {
                     return;
